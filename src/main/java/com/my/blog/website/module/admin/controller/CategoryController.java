@@ -46,7 +46,7 @@ public class CategoryController extends BaseController {
     @PostMapping(value = "save")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo saveCategory(@RequestParam String cname, @RequestParam Integer mid) {
+    public RestResponseBo saveCategory(@RequestParam String cname, @RequestParam String mid) {
         try {
             metasService.saveMeta(Types.CATEGORY.getType(), cname, mid);
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public class CategoryController extends BaseController {
     @RequestMapping(value = "delete")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo delete(@RequestParam int mid) {
+    public RestResponseBo delete(@RequestParam String mid) {
         try {
             metasService.delete(mid);
         } catch (Exception e) {

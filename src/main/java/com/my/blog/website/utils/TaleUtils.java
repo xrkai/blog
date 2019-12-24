@@ -3,8 +3,8 @@ package com.my.blog.website.utils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.exception.TipException;
-import com.my.blog.website.modal.Vo.UserVo;
 import com.my.blog.website.module.admin.controller.AttachController;
+import com.my.blog.website.module.admin.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
@@ -180,20 +180,22 @@ public class TaleUtils {
      * @return
      */
     public static DataSource getNewDataSource() {
-        if (newDataSource == null) synchronized (TaleUtils.class) {
-            if (newDataSource == null) {
-                Properties properties = TaleUtils.getPropFromFile("application-jdbc.properties");
-                if (properties.size() == 0) {
-                    return newDataSource;
+        if (newDataSource == null) {
+            synchronized (TaleUtils.class) {
+                if (newDataSource == null) {
+                    Properties properties = TaleUtils.getPropFromFile("application-jdbc.properties");
+                    if (properties.size() == 0) {
+                        return newDataSource;
+                    }
+                    DriverManagerDataSource managerDataSource = new DriverManagerDataSource();
+                    //        TODO 对不同数据库支持
+                    managerDataSource.setDriverClassName("com.mysql.jdbc.Driver");
+                    managerDataSource.setPassword(properties.getProperty("spring.datasource.password"));
+                    String str = "jdbc:mysql://" + properties.getProperty("spring.datasource.url") + "/" + properties.getProperty("spring.datasource.dbname") + "?useUnicode=true&characterEncoding=utf-8&useSSL=false";
+                    managerDataSource.setUrl(str);
+                    managerDataSource.setUsername(properties.getProperty("spring.datasource.username"));
+                    newDataSource = managerDataSource;
                 }
-                DriverManagerDataSource managerDataSource = new DriverManagerDataSource();
-                //        TODO 对不同数据库支持
-                managerDataSource.setDriverClassName("com.mysql.jdbc.Driver");
-                managerDataSource.setPassword(properties.getProperty("spring.datasource.password"));
-                String str = "jdbc:mysql://" + properties.getProperty("spring.datasource.url") + "/" + properties.getProperty("spring.datasource.dbname") + "?useUnicode=true&characterEncoding=utf-8&useSSL=false";
-                managerDataSource.setUrl(str);
-                managerDataSource.setUsername(properties.getProperty("spring.datasource.username"));
-                newDataSource = managerDataSource;
             }
         }
         return newDataSource;
@@ -204,12 +206,12 @@ public class TaleUtils {
      *
      * @return
      */
-    public static UserVo getLoginUser(HttpServletRequest request) {
+    public static User getLoginUser(HttpServletRequest request) {
         HttpSession session = request.getSession();
         if (null == session) {
             return null;
         }
-        return (UserVo) session.getAttribute(WebConst.LOGIN_SESSION_KEY);
+        return (User) session.getAttribute(WebConst.LOGIN_SESSION_KEY);
     }
 
 
@@ -259,9 +261,9 @@ public class TaleUtils {
      * @param response
      * @param uid
      */
-    public static void setCookie(HttpServletResponse response, Integer uid) {
+    public static void setCookie(HttpServletResponse response, String uid) {
         try {
-            String val = Tools.enAes(uid.toString(), WebConst.AES_SALT);
+            String val = Tools.enAes(uid, WebConst.AES_SALT);
             boolean isSSL = false;
             Cookie cookie = new Cookie(WebConst.USER_IN_COOKIE, val);
             cookie.setPath("/");

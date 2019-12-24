@@ -1,6 +1,7 @@
 package com.my.blog.website.modal.Bo;
 
-import com.my.blog.website.modal.Vo.CommentVo;
+import com.my.blog.website.module.admin.entity.Comment;
+import lombok.Data;
 
 import java.util.List;
 
@@ -8,12 +9,13 @@ import java.util.List;
  * 返回页面的评论，包含父子评论内容
  * Created by 13 on 2017/2/24.
  */
-public class CommentBo extends CommentVo {
+@Data
+public class CommentBo extends Comment {
 
     private int levels;
-    private List<CommentVo> children;
+    private List<Comment> children;
 
-    public CommentBo(CommentVo comments) {
+    public CommentBo(Comment comments) {
         setAuthor(comments.getAuthor());
         setMail(comments.getMail());
         setCoid(comments.getCoid());
@@ -27,19 +29,4 @@ public class CommentBo extends CommentVo {
         setCid(comments.getCid());
     }
 
-    public int getLevels() {
-        return levels;
-    }
-
-    public void setLevels(int levels) {
-        this.levels = levels;
-    }
-
-    public List<CommentVo> getChildren() {
-        return children;
-    }
-
-    public void setChildren(List<CommentVo> children) {
-        this.children = children;
-    }
 }

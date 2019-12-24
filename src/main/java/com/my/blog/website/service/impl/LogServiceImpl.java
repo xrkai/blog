@@ -1,9 +1,9 @@
 package com.my.blog.website.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.modal.Vo.LogVo;
-import com.my.blog.website.modal.Vo.LogVoExample;
-import com.my.blog.website.module.admin.mapper.LogVoMapper;
+import com.my.blog.website.module.admin.entity.Log;
+import com.my.blog.website.module.admin.mapper.LogMapper;
 import com.my.blog.website.service.ILogService;
 import com.my.blog.website.utils.DateKit;
 import lombok.extern.slf4j.Slf4j;
@@ -20,26 +20,26 @@ import java.util.List;
 public class LogServiceImpl implements ILogService {
 
     @Resource
-    private LogVoMapper logDao;
+    private LogMapper logMapper;
 
     @Override
-    public void insertLog(LogVo logVo) {
-        logDao.insert(logVo);
+    public void insertLog(Log logVo) {
+        logMapper.insert(logVo);
     }
 
     @Override
-    public void insertLog(String action, String data, String ip, Integer authorId) {
-        LogVo logs = new LogVo();
+    public void insertLog(String action, String data, String ip, String authorId) {
+        Log logs = new Log();
         logs.setAction(action);
         logs.setData(data);
         logs.setIp(ip);
         logs.setAuthorId(authorId);
         logs.setCreated(DateKit.getCurrentUnixTime());
-        logDao.insert(logs);
+        logMapper.insert(logs);
     }
 
     @Override
-    public List<LogVo> getLogs(int page, int limit) {
+    public List<Log> getLogs(int page, int limit) {
         log.debug("Enter getLogs method:page={},linit={}", page, limit);
         if (page <= 0) {
             page = 1;
@@ -47,9 +47,9 @@ public class LogServiceImpl implements ILogService {
         if (limit < 1 || limit > WebConst.MAX_POSTS) {
             limit = 10;
         }
-        LogVoExample logVoExample = new LogVoExample();
-        logVoExample.setOrderByClause("id desc");
-        List<LogVo> logVos = logDao.selectByExample(logVoExample);
+        QueryWrapper<Log> logQueryWrapper = new QueryWrapper<>();
+        logQueryWrapper.orderByDesc("id");
+        List<Log> logVos = logMapper.selectList(logQueryWrapper);
         log.debug("Exit getLogs method");
         return logVos;
     }

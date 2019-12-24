@@ -12,13 +12,13 @@ import java.io.Serializable;
  */
 @Data
 @Builder
-@NoArgsConstructor          // 快捷生成无参构造函数
-@AllArgsConstructor         // 快捷生成全参构造函数
+@NoArgsConstructor
+@AllArgsConstructor
 public class StatisticsBo implements Serializable {
 
-    private Long articles;
-    private Long comments;
-    private Long links;
-    private Long attachs;
+    private Integer articles;
+    private Integer comments;
+    private Integer links;
+    private Integer attachs;
 
 }

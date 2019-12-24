@@ -1,16 +1,11 @@
 package com.my.blog.website.dto;
 
-import com.my.blog.website.modal.Vo.MetaVo;
+import com.my.blog.website.module.admin.entity.Meta;
+import lombok.Data;
 
-public class MetaDto extends MetaVo {
+@Data
+public class MetaDto extends Meta {
 
     private int count;
 
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
 }

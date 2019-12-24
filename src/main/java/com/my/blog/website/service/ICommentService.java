@@ -1,9 +1,9 @@
 package com.my.blog.website.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.my.blog.website.modal.Bo.CommentBo;
-import com.my.blog.website.modal.Vo.CommentVo;
-import com.my.blog.website.modal.Vo.CommentVoExample;
+import com.my.blog.website.module.admin.entity.Comment;
 
 /**
  * Created by BlueT on 2017/3/16.
@@ -15,7 +15,7 @@ public interface ICommentService {
      *
      * @param commentVo
      */
-    void insertComment(CommentVo commentVo);
+    void insertComment(Comment commentVo);
 
     /**
      * 获取文章下的评论
@@ -25,17 +25,17 @@ public interface ICommentService {
      * @param limit
      * @return CommentBo
      */
-    Page<CommentBo> getComments(Integer cid, int page, int limit);
+    Page<CommentBo> getComments(String cid, int page, int limit);
 
     /**
      * 获取文章下的评论
      *
-     * @param commentVoExample
+     * @param userId
      * @param page
      * @param limit
      * @return CommentVo
      */
-    Page<CommentVo> getCommentsWithPage(CommentVoExample commentVoExample, int page, int limit);
+    IPage<Comment> getCommentsWithPage(String userId, int page, int limit);
 
 
     /**
@@ -44,7 +44,7 @@ public interface ICommentService {
      * @param coid
      * @return
      */
-    CommentVo getCommentById(Integer coid);
+    Comment getCommentById(String coid);
 
 
     /**
@@ -54,13 +54,13 @@ public interface ICommentService {
      * @param cid
      * @throws Exception
      */
-    void delete(Integer coid, Integer cid);
+    void delete(String coid, String cid);
 
     /**
      * 更新评论状态
      *
      * @param comments
      */
-    void update(CommentVo comments);
+    void update(Comment comments);
 
 }

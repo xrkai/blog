@@ -1,10 +1,10 @@
 package com.my.blog.website.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.my.blog.website.exception.TipException;
-import com.my.blog.website.modal.Vo.UserVo;
-import com.my.blog.website.modal.Vo.UserVoExample;
-import com.my.blog.website.module.admin.mapper.UserVoMapper;
+import com.my.blog.website.module.admin.entity.User;
+import com.my.blog.website.module.admin.mapper.UserMapper;
 import com.my.blog.website.service.IUserService;
 import com.my.blog.website.utils.TaleUtils;
 import org.springframework.stereotype.Service;
@@ -20,44 +20,43 @@ public class UserServiceImpl implements IUserService {
 
 
     @Resource
-    private UserVoMapper userDao;
+    private UserMapper userMapper;
 
     @Override
-    public Integer insertUser(UserVo userVo) {
+    public String insertUser(User userVo) {
         Integer uid = null;
         if (StringUtils.isNotEmpty(userVo.getUsername()) && StringUtils.isNotEmpty(userVo.getEmail())) {
 //            用户密码加密
             String encodePwd = TaleUtils.MD5encode(userVo.getUsername() + userVo.getPassword());
             userVo.setPassword(encodePwd);
-            userDao.insertSelective(userVo);
+            userMapper.insert(userVo);
         }
         return userVo.getUid();
     }
 
     @Override
-    public UserVo queryUserById(Integer uid) {
-        UserVo userVo = null;
+    public User queryUserById(Integer uid) {
+        User userVo = null;
         if (uid != null) {
-            userVo = userDao.selectByPrimaryKey(uid);
+            userVo = userMapper.selectById(uid);
         }
         return userVo;
     }
 
     @Override
-    public UserVo login(String username, String password) {
+    public User login(String username, String password) {
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             throw new TipException("用户名和密码不能为空");
         }
-        UserVoExample example = new UserVoExample();
-        UserVoExample.Criteria criteria = example.createCriteria();
-        criteria.andUsernameEqualTo(username);
-        long count = userDao.countByExample(example);
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.lambda().eq(User::getUsername, username);
+        Integer count = userMapper.selectCount(userQueryWrapper);
         if (count < 1) {
             throw new TipException("不存在该用户");
         }
         String pwd = TaleUtils.MD5encode(username + password);
-        criteria.andPasswordEqualTo(pwd);
-        List<UserVo> userVos = userDao.selectByExample(example);
+        userQueryWrapper.lambda().eq(User::getPassword, pwd);
+        List<User> userVos = userMapper.selectList(userQueryWrapper);
         if (userVos.size() != 1) {
             throw new TipException("用户名或密码错误");
         }
@@ -65,11 +64,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public void updateByUid(UserVo userVo) {
-        if (null == userVo || null == userVo.getUid()) {
+    public void updateByUid(User user) {
+        if (null == user || null == user.getUid()) {
             throw new TipException("userVo is null");
         }
-        int i = userDao.updateByPrimaryKeySelective(userVo);
+        int i = userMapper.updateById(user);
         if (i != 1) {
             throw new TipException("update user by uid and retrun is not one");
         }

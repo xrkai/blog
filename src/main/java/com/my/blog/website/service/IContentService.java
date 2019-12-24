@@ -1,26 +1,21 @@
 package com.my.blog.website.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.my.blog.website.modal.Vo.ContentVoExample;
-import com.my.blog.website.modal.Vo.ContentVo;
+import com.my.blog.website.module.admin.entity.Content;
 
 /**
  * Created by Administrator on 2017/3/13 013.
  */
 public interface IContentService {
 
-//    /**
-//     * 保存文章
-//     * @param contentVo contentVo
-//     */
-//    void insertContent(ContentVo contentVo);
 
     /**
      * 发布文章
      *
      * @param contents
      */
-    void publish(ContentVo contents);
+    void publish(Content contents);
 
     /**
      * 查询文章返回多条数据
@@ -29,7 +24,7 @@ public interface IContentService {
      * @param limit 每页条数
      * @return ContentVo
      */
-    Page<ContentVo> getContents(Integer p, Integer limit);
+    IPage<Content> getContents(Integer p, Integer limit);
 
 
     /**
@@ -38,14 +33,14 @@ public interface IContentService {
      * @param id id
      * @return ContentVo
      */
-    ContentVo getContents(String id);
+    Content getContents(String id);
 
     /**
      * 根据主键更新
      *
      * @param contentVo contentVo
      */
-    void updateContentByCid(ContentVo contentVo);
+    void updateContentByCid(Content contentVo);
 
 
     /**
@@ -56,7 +51,7 @@ public interface IContentService {
      * @param limit limit
      * @return ContentVo
      */
-    Page<ContentVo> getArticles(Integer mid, int page, int limit);
+    Page<Content> getArticles(String mid, int page, int limit);
 
     /**
      * 搜索、分页
@@ -66,30 +61,30 @@ public interface IContentService {
      * @param limit   limit
      * @return ContentVo
      */
-    Page<ContentVo> getArticles(String keyword, Integer page, Integer limit);
+    IPage<Content> getArticles(String keyword, Integer page, Integer limit);
 
 
     /**
-     * @param commentVoExample
      * @param page
      * @param limit
+     * @param type
      * @return
      */
-    Page<ContentVo> getArticlesWithpage(ContentVoExample commentVoExample, Integer page, Integer limit);
+    IPage<Content> getArticlesWithPage(Integer page, Integer limit, String type);
 
     /**
      * 根据文章id删除
      *
      * @param cid
      */
-    void deleteByCid(Integer cid);
+    void deleteByCid(String cid);
 
     /**
      * 编辑文章
      *
      * @param contents
      */
-    void updateArticle(ContentVo contents);
+    void updateArticle(Content contents);
 
 
     /**

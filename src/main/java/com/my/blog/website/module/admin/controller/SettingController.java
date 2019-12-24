@@ -7,7 +7,7 @@ import com.my.blog.website.dto.LogActions;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.BackResponseBo;
 import com.my.blog.website.modal.Bo.RestResponseBo;
-import com.my.blog.website.modal.Vo.OptionVo;
+import com.my.blog.website.module.admin.entity.Option;
 import com.my.blog.website.module.blog.controller.BaseController;
 import com.my.blog.website.service.ILogService;
 import com.my.blog.website.service.IOptionService;
@@ -45,7 +45,7 @@ public class SettingController extends BaseController {
      */
     @GetMapping(value = "")
     public String setting(HttpServletRequest request) {
-        List<OptionVo> voList = optionService.getOptions();
+        List<Option> voList = optionService.getOptions();
         Map<String, String> options = new HashMap<>();
         voList.forEach((option) -> {
             options.put(option.getName(), option.getValue());

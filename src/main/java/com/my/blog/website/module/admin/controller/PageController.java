@@ -1,14 +1,13 @@
 package com.my.blog.website.module.admin.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.dto.LogActions;
 import com.my.blog.website.dto.Types;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.RestResponseBo;
-import com.my.blog.website.modal.Vo.ContentVo;
-import com.my.blog.website.modal.Vo.ContentVoExample;
-import com.my.blog.website.modal.Vo.UserVo;
+import com.my.blog.website.module.admin.entity.Content;
+import com.my.blog.website.module.admin.entity.User;
 import com.my.blog.website.module.blog.controller.BaseController;
 import com.my.blog.website.service.IContentService;
 import com.my.blog.website.service.ILogService;
@@ -37,10 +36,7 @@ public class PageController extends BaseController {
 
     @GetMapping(value = "")
     public String index(HttpServletRequest request) {
-        ContentVoExample contentVoExample = new ContentVoExample();
-        contentVoExample.setOrderByClause("created desc");
-        contentVoExample.createCriteria().andTypeEqualTo(Types.PAGE.getType());
-        Page<ContentVo> contentsPaginator = contentsService.getArticlesWithpage(contentVoExample, 1, WebConst.MAX_POSTS);
+        IPage<Content> contentsPaginator = contentsService.getArticlesWithPage(1, WebConst.MAX_POSTS, Types.PAGE.getType());
         request.setAttribute("articles", contentsPaginator);
         return "admin/page_list";
     }
@@ -52,7 +48,7 @@ public class PageController extends BaseController {
 
     @GetMapping(value = "/{cid}")
     public String editPage(@PathVariable String cid, HttpServletRequest request) {
-        ContentVo contents = contentsService.getContents(cid);
+        Content contents = contentsService.getContents(cid);
         request.setAttribute("contents", contents);
         return "admin/page_edit";
     }
@@ -64,8 +60,8 @@ public class PageController extends BaseController {
                                       @RequestParam String status, @RequestParam String slug,
                                       @RequestParam(required = false) Integer allowComment, @RequestParam(required = false) Integer allowPing, HttpServletRequest request) {
 
-        UserVo users = this.user(request);
-        ContentVo contents = new ContentVo();
+        User users = this.user(request);
+        Content contents = new Content();
         contents.setTitle(title);
         contents.setContent(content);
         contents.setStatus(status);
@@ -96,13 +92,13 @@ public class PageController extends BaseController {
     @PostMapping(value = "modify")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo modifyArticle(@RequestParam Integer cid, @RequestParam String title,
+    public RestResponseBo modifyArticle(@RequestParam String cid, @RequestParam String title,
                                         @RequestParam String content,
                                         @RequestParam String status, @RequestParam String slug,
                                         @RequestParam(required = false) Integer allowComment, @RequestParam(required = false) Integer allowPing, HttpServletRequest request) {
 
-        UserVo users = this.user(request);
-        ContentVo contents = new ContentVo();
+        User users = this.user(request);
+        Content contents = new Content();
         contents.setCid(cid);
         contents.setTitle(title);
         contents.setContent(content);
@@ -133,7 +129,7 @@ public class PageController extends BaseController {
     @RequestMapping(value = "delete")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo delete(@RequestParam int cid, HttpServletRequest request) {
+    public RestResponseBo delete(@RequestParam String cid, HttpServletRequest request) {
         try {
             contentsService.deleteByCid(cid);
             logService.insertLog(LogActions.DEL_PAGE.getAction(), cid + "", request.getRemoteAddr(), this.getUid(request));

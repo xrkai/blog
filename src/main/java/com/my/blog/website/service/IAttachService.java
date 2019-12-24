@@ -1,7 +1,7 @@
 package com.my.blog.website.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.my.blog.website.modal.Vo.AttachVo;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.my.blog.website.module.admin.entity.Attach;
 
 /**
  * Created by wangq on 2017/3/20.
@@ -14,7 +14,7 @@ public interface IAttachService {
      * @param limit
      * @return
      */
-    Page<AttachVo> getAttachs(Integer page, Integer limit);
+    IPage<Attach> getAttachs(Integer page, Integer limit);
 
     /**
      * 保存附件
@@ -24,7 +24,7 @@ public interface IAttachService {
      * @param ftype
      * @param author
      */
-    void save(String fname, String fkey, String ftype, Integer author);
+    void save(String fname, String fkey, String ftype, String author);
 
     /**
      * 根据附件id查询附件
@@ -32,7 +32,7 @@ public interface IAttachService {
      * @param id
      * @return
      */
-    AttachVo selectById(Integer id);
+    Attach selectById(Integer id);
 
     /**
      * 删除附件

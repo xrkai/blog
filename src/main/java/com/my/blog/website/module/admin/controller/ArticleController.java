@@ -1,15 +1,14 @@
 package com.my.blog.website.module.admin.controller;
 
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.my.blog.website.dto.LogActions;
 import com.my.blog.website.dto.Types;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.RestResponseBo;
-import com.my.blog.website.modal.Vo.ContentVo;
-import com.my.blog.website.modal.Vo.ContentVoExample;
-import com.my.blog.website.modal.Vo.MetaVo;
-import com.my.blog.website.modal.Vo.UserVo;
+import com.my.blog.website.module.admin.entity.Content;
+import com.my.blog.website.module.admin.entity.Meta;
+import com.my.blog.website.module.admin.entity.User;
 import com.my.blog.website.module.blog.controller.BaseController;
 import com.my.blog.website.service.IContentService;
 import com.my.blog.website.service.ILogService;
@@ -52,10 +51,7 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = "")
     public String index(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "limit", defaultValue = "15") int limit, HttpServletRequest request) {
-        ContentVoExample contentVoExample = new ContentVoExample();
-        contentVoExample.setOrderByClause("created desc");
-        contentVoExample.createCriteria().andTypeEqualTo(Types.ARTICLE.getType());
-        Page<ContentVo> contentsPaginator = contentsService.getArticlesWithpage(contentVoExample, page, limit);
+        IPage<Content> contentsPaginator = contentsService.getArticlesWithPage(page, limit, Types.ARTICLE.getType());
         request.setAttribute("articles", contentsPaginator);
         return "admin/article_list";
     }
@@ -68,7 +64,7 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = "/publish")
     public String newArticle(HttpServletRequest request) {
-        List<MetaVo> categories = metasService.getMetas(Types.CATEGORY.getType());
+        List<Meta> categories = metasService.getMetas(Types.CATEGORY.getType());
         request.setAttribute("categories", categories);
         return "admin/article_edit";
     }
@@ -82,9 +78,9 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = "/{cid}")
     public String editArticle(@PathVariable String cid, HttpServletRequest request) {
-        ContentVo contents = contentsService.getContents(cid);
+        Content contents = contentsService.getContents(cid);
         request.setAttribute("contents", contents);
-        List<MetaVo> categories = metasService.getMetas(Types.CATEGORY.getType());
+        List<Meta> categories = metasService.getMetas(Types.CATEGORY.getType());
         request.setAttribute("categories", categories);
         request.setAttribute("active", "article");
         return "admin/article_edit";
@@ -100,8 +96,8 @@ public class ArticleController extends BaseController {
     @PostMapping(value = "/publish")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo publishArticle(ContentVo contents, HttpServletRequest request) {
-        UserVo users = this.user(request);
+    public RestResponseBo publishArticle(Content contents, HttpServletRequest request) {
+        User users = this.user(request);
         contents.setAuthorId(users.getUid());
         contents.setType(Types.ARTICLE.getType());
         if (StringUtils.isEmpty(contents.getCategories())) {
@@ -131,8 +127,8 @@ public class ArticleController extends BaseController {
     @PostMapping(value = "/modify")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo modifyArticle(ContentVo contents, HttpServletRequest request) {
-        UserVo users = this.user(request);
+    public RestResponseBo modifyArticle(Content contents, HttpServletRequest request) {
+        User users = this.user(request);
         contents.setAuthorId(users.getUid());
         contents.setType(Types.ARTICLE.getType());
         try {
@@ -159,7 +155,7 @@ public class ArticleController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo delete(@RequestParam int cid, HttpServletRequest request) {
+    public RestResponseBo delete(@RequestParam String cid, HttpServletRequest request) {
         try {
             contentsService.deleteByCid(cid);
             logService.insertLog(LogActions.DEL_ARTICLE.getAction(), cid + "", request.getRemoteAddr(), this.getUid(request));

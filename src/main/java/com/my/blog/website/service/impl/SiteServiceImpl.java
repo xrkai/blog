@@ -1,5 +1,6 @@
 package com.my.blog.website.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.dto.MetaDto;
@@ -8,12 +9,14 @@ import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.ArchiveBo;
 import com.my.blog.website.modal.Bo.BackResponseBo;
 import com.my.blog.website.modal.Bo.StatisticsBo;
-import com.my.blog.website.modal.Vo.*;
 import com.my.blog.website.module.admin.controller.AttachController;
-import com.my.blog.website.module.admin.mapper.AttachVoMapper;
-import com.my.blog.website.module.admin.mapper.CommentVoMapper;
-import com.my.blog.website.module.admin.mapper.ContentVoMapper;
-import com.my.blog.website.module.admin.mapper.MetaVoMapper;
+import com.my.blog.website.module.admin.entity.Comment;
+import com.my.blog.website.module.admin.entity.Content;
+import com.my.blog.website.module.admin.entity.Meta;
+import com.my.blog.website.module.admin.mapper.AttachMapper;
+import com.my.blog.website.module.admin.mapper.CommentMapper;
+import com.my.blog.website.module.admin.mapper.ContentMapper;
+import com.my.blog.website.module.admin.mapper.MetaMapper;
 import com.my.blog.website.service.ISiteService;
 import com.my.blog.website.utils.DateKit;
 import com.my.blog.website.utils.TaleUtils;
@@ -37,40 +40,38 @@ import java.util.*;
 public class SiteServiceImpl implements ISiteService {
 
     @Resource
-    private CommentVoMapper commentDao;
+    private CommentMapper commentMapper;
 
     @Resource
-    private ContentVoMapper contentDao;
+    private ContentMapper contentMapper;
 
     @Resource
-    private AttachVoMapper attachDao;
+    private AttachMapper attachMapper;
 
     @Resource
-    private MetaVoMapper metaDao;
+    private MetaMapper metaMapper;
 
     @Override
-    public List<CommentVo> recentComments(int limit) {
+    public List<Comment> recentComments(int limit) {
         log.debug("Enter recentComments method:limit={}", limit);
         if (limit < 0 || limit > 10) {
             limit = 10;
         }
-        CommentVoExample example = new CommentVoExample();
-        example.setOrderByClause("created desc");
-        List<CommentVo> byPage = commentDao.selectByExampleWithBLOBs(example);
+        QueryWrapper<Comment> commentQueryWrapper = new QueryWrapper<>();
+        commentQueryWrapper.orderByDesc("created");
         log.debug("Exit recentComments method");
-        return byPage;
+        return commentMapper.selectList(commentQueryWrapper);
     }
 
     @Override
-    public List<ContentVo> recentContents(int limit) {
+    public List<Content> recentContents(int limit) {
         log.debug("Enter recentContents method");
         if (limit < 0 || limit > 10) {
             limit = 10;
         }
-        ContentVoExample example = new ContentVoExample();
-        example.createCriteria().andStatusEqualTo(Types.PUBLISH.getType()).andTypeEqualTo(Types.ARTICLE.getType());
-        example.setOrderByClause("created desc");
-        List<ContentVo> list = contentDao.selectByExample(example);
+        QueryWrapper<Content> contentQueryWrapper = new QueryWrapper<>();
+        contentQueryWrapper.orderByDesc("created");
+        List<Content> list = contentMapper.selectList(contentQueryWrapper);
         log.debug("Exit recentContents method");
         return list;
     }
@@ -139,9 +140,9 @@ public class SiteServiceImpl implements ISiteService {
     }
 
     @Override
-    public CommentVo getComment(Integer coid) {
+    public Comment getComment(Integer coid) {
         if (null != coid) {
-            return commentDao.selectByPrimaryKey(coid);
+            return commentMapper.selectById(coid);
         }
         return null;
     }
@@ -150,18 +151,20 @@ public class SiteServiceImpl implements ISiteService {
     public StatisticsBo getStatistics() {
         log.debug("Enter getStatistics method");
         StatisticsBo statistics = new StatisticsBo();
+        QueryWrapper<Content> contentQueryWrapper = new QueryWrapper<>();
+        contentQueryWrapper.lambda()
+                .eq(Content::getType, Types.ARTICLE.getType())
+                .eq(Content::getStatus, Types.PUBLISH.getType());
 
-        ContentVoExample contentVoExample = new ContentVoExample();
-        contentVoExample.createCriteria().andTypeEqualTo(Types.ARTICLE.getType()).andStatusEqualTo(Types.PUBLISH.getType());
-        Long articles = contentDao.countByExample(contentVoExample);
+        Integer articles = contentMapper.selectCount(contentQueryWrapper);
 
-        Long comments = commentDao.countByExample(new CommentVoExample());
+        Integer comments = commentMapper.selectCount(null);
 
-        Long attachs = attachDao.countByExample(new AttachVoExample());
+        Integer attachs = attachMapper.selectCount(null);
 
-        MetaVoExample metaVoExample = new MetaVoExample();
-        metaVoExample.createCriteria().andTypeEqualTo(Types.LINK.getType());
-        Long links = metaDao.countByExample(metaVoExample);
+        QueryWrapper<Meta> metaQueryWrapper = new QueryWrapper<>();
+        metaQueryWrapper.lambda().eq(Meta::getType, Types.LINK.getType());
+        Integer links = metaMapper.selectCount(metaQueryWrapper);
 
         statistics.setArticles(articles);
         statistics.setComments(comments);
@@ -174,19 +177,19 @@ public class SiteServiceImpl implements ISiteService {
     @Override
     public List<ArchiveBo> getArchives() {
         log.debug("Enter getArchives method");
-        List<ArchiveBo> archives = contentDao.findReturnArchiveBo();
+        List<ArchiveBo> archives = contentMapper.findReturnArchiveBo();
         if (null != archives) {
             archives.forEach(archive -> {
-                ContentVoExample example = new ContentVoExample();
-                ContentVoExample.Criteria criteria = example.createCriteria().andTypeEqualTo(Types.ARTICLE.getType()).andStatusEqualTo(Types.PUBLISH.getType());
-                example.setOrderByClause("created desc");
                 String date = archive.getDate();
                 Date sd = DateKit.dateFormat(date, "yyyy年MM月");
                 int start = DateKit.getUnixTimeByDate(sd);
                 int end = DateKit.getUnixTimeByDate(DateKit.dateAdd(DateKit.INTERVAL_MONTH, sd, 1)) - 1;
-                criteria.andCreatedGreaterThan(start);
-                criteria.andCreatedLessThan(end);
-                List<ContentVo> contentss = contentDao.selectByExample(example);
+                QueryWrapper<Content> contentQueryWrapper = new QueryWrapper<>();
+                contentQueryWrapper.lambda().eq(Content::getType, Types.ARTICLE.getType())
+                        .gt(Content::getCreated, start)
+                        .lt(Content::getCreated, end);
+                contentQueryWrapper.orderByDesc("created");
+                List<Content> contentss = contentMapper.selectList(contentQueryWrapper);
                 archive.setArticles(contentss);
             });
         }
@@ -209,7 +212,7 @@ public class SiteServiceImpl implements ISiteService {
             paraMap.put("type", type);
             paraMap.put("order", orderBy);
             paraMap.put("limit", limit);
-            retList = metaDao.selectFromSql(paraMap);
+            retList = metaMapper.selectFromSql(paraMap);
         }
         log.debug("Exit metas method");
         return retList;

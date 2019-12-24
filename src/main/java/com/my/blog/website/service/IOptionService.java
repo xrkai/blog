@@ -1,6 +1,6 @@
 package com.my.blog.website.service;
 
-import com.my.blog.website.modal.Vo.OptionVo;
+import com.my.blog.website.module.admin.entity.Option;
 
 import java.util.List;
 import java.util.Map;
@@ -11,12 +11,9 @@ import java.util.Map;
  */
 public interface IOptionService {
 
-    void insertOption(OptionVo optionVo);
-
     void insertOption(String name, String value);
 
-    List<OptionVo> getOptions();
-
+    List<Option> getOptions();
 
     /**
      * 保存一组配置

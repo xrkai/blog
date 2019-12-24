@@ -1,6 +1,6 @@
 package com.my.blog.website.module.blog.controller;
 
-import com.my.blog.website.modal.Vo.UserVo;
+import com.my.blog.website.module.admin.entity.User;
 import com.my.blog.website.utils.MapCache;
 import com.my.blog.website.utils.TaleUtils;
 
@@ -41,11 +41,11 @@ public abstract class BaseController {
      * @param request
      * @return
      */
-    public UserVo user(HttpServletRequest request) {
+    public User user(HttpServletRequest request) {
         return TaleUtils.getLoginUser(request);
     }
 
-    public Integer getUid(HttpServletRequest request) {
+    public String getUid(HttpServletRequest request) {
         return this.user(request).getUid();
     }
 

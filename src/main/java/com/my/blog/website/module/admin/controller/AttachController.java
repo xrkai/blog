@@ -1,13 +1,13 @@
 package com.my.blog.website.module.admin.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.dto.LogActions;
 import com.my.blog.website.dto.Types;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.RestResponseBo;
-import com.my.blog.website.modal.Vo.AttachVo;
-import com.my.blog.website.modal.Vo.UserVo;
+import com.my.blog.website.module.admin.entity.Attach;
+import com.my.blog.website.module.admin.entity.User;
 import com.my.blog.website.module.blog.controller.BaseController;
 import com.my.blog.website.service.IAttachService;
 import com.my.blog.website.service.ILogService;
@@ -56,7 +56,7 @@ public class AttachController extends BaseController {
     @GetMapping(value = "")
     public String index(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int page,
                         @RequestParam(value = "limit", defaultValue = "12") int limit) {
-        Page<AttachVo> attachPaginator = attachService.getAttachs(page, limit);
+        IPage<Attach> attachPaginator = attachService.getAttachs(page, limit);
         request.setAttribute("attachs", attachPaginator);
         request.setAttribute(Types.ATTACH_URL.getType(), Commons.site_option(Types.ATTACH_URL.getType(), Commons.site_url()));
         request.setAttribute("max_file_size", WebConst.MAX_FILE_SIZE / 1024);
@@ -73,8 +73,8 @@ public class AttachController extends BaseController {
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
     public RestResponseBo upload(HttpServletRequest request, @RequestParam("file") MultipartFile[] multipartFiles) throws IOException {
-        UserVo users = this.user(request);
-        Integer uid = users.getUid();
+        User users = this.user(request);
+        String uid = users.getUid();
         List<String> errorFiles = new ArrayList<>();
         try {
             for (MultipartFile multipartFile : multipartFiles) {
@@ -111,8 +111,10 @@ public class AttachController extends BaseController {
     @Transactional(rollbackFor = TipException.class)
     public RestResponseBo delete(@RequestParam Integer id, HttpServletRequest request) {
         try {
-            AttachVo attach = attachService.selectById(id);
-            if (null == attach) return RestResponseBo.fail("不存在该附件");
+            Attach attach = attachService.selectById(id);
+            if (null == attach) {
+                return RestResponseBo.fail("不存在该附件");
+            }
             attachService.deleteById(id);
             new File(CLASSPATH + attach.getFkey()).delete();
             logService.insertLog(LogActions.DEL_ARTICLE.getAction(), attach.getFkey(), request.getRemoteAddr(), this.getUid(request));

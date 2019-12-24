@@ -2,7 +2,7 @@ package com.my.blog.website.interceptor;
 
 import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.dto.Types;
-import com.my.blog.website.modal.Vo.UserVo;
+import com.my.blog.website.module.admin.entity.User;
 import com.my.blog.website.service.IUserService;
 import com.my.blog.website.utils.*;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +43,7 @@ public class BaseInterceptor implements HandlerInterceptor {
         log.info("用户访问地址: {}, 来路地址: {}", uri, IPKit.getIpAddrByRequest(request));
 
         //请求拦截处理
-        UserVo user = TaleUtils.getLoginUser(request);
+        User user = TaleUtils.getLoginUser(request);
         if (null == user) {
             Integer uid = TaleUtils.getCookieUid(request);
             if (null != uid) {

@@ -1,13 +1,14 @@
 package com.my.blog.website.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.CommentBo;
-import com.my.blog.website.modal.Vo.CommentVo;
-import com.my.blog.website.modal.Vo.CommentVoExample;
-import com.my.blog.website.modal.Vo.ContentVo;
-import com.my.blog.website.module.admin.mapper.CommentVoMapper;
+import com.my.blog.website.module.admin.entity.Comment;
+import com.my.blog.website.module.admin.entity.Content;
+import com.my.blog.website.module.admin.mapper.CommentMapper;
 import com.my.blog.website.service.ICommentService;
 import com.my.blog.website.service.IContentService;
 import com.my.blog.website.utils.DateKit;
@@ -27,13 +28,13 @@ import java.util.List;
 public class CommentServiceImpl implements ICommentService {
 
     @Resource
-    private CommentVoMapper commentDao;
+    private CommentMapper commentMapper;
 
     @Resource
     private IContentService contentService;
 
     @Override
-    public void insertComment(CommentVo comments) {
+    public void insertComment(Comment comments) {
         if (null == comments) {
             throw new TipException("评论对象为空");
         }
@@ -52,29 +53,29 @@ public class CommentServiceImpl implements ICommentService {
         if (null == comments.getCid()) {
             throw new TipException("评论文章不能为空");
         }
-        ContentVo contents = contentService.getContents(String.valueOf(comments.getCid()));
+        Content contents = contentService.getContents(String.valueOf(comments.getCid()));
         if (null == contents) {
             throw new TipException("不存在的文章");
         }
         comments.setOwnerId(contents.getAuthorId());
         comments.setCreated(DateKit.getCurrentUnixTime());
-        commentDao.insertSelective(comments);
+        commentMapper.insert(comments);
 
-        ContentVo temp = new ContentVo();
+        Content temp = new Content();
         temp.setCid(contents.getCid());
         temp.setCommentsNum(contents.getCommentsNum() + 1);
         contentService.updateContentByCid(temp);
     }
 
     @Override
-    public Page<CommentBo> getComments(Integer cid, int page, int limit) {
-
+    public Page<CommentBo> getComments(String cid, int page, int limit) {
         if (null != cid) {
-            CommentVoExample commentVoExample = new CommentVoExample();
-            commentVoExample.createCriteria().andCidEqualTo(cid).andParentEqualTo(0);
-            commentVoExample.setOrderByClause("coid desc");
-            List<CommentVo> parents = commentDao.selectByExampleWithBLOBs(commentVoExample);
-            Page<CommentVo> commentPaginator = new Page<>();
+            QueryWrapper<Comment> commentQueryWrapper = new QueryWrapper<>();
+            commentQueryWrapper.lambda().eq(Comment::getCid, cid).eq(Comment::getParent, 0);
+            commentQueryWrapper.orderByDesc("coid");
+            List<Comment> parents = commentMapper.selectList(commentQueryWrapper);
+
+            Page<Comment> commentPaginator = new Page<>();
             commentPaginator.setRecords(parents);
             Page<CommentBo> returnBo = copyPage(commentPaginator);
             if (parents.size() != 0) {
@@ -91,28 +92,29 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public Page<CommentVo> getCommentsWithPage(CommentVoExample commentVoExample, int page, int limit) {
-        List<CommentVo> commentVos = commentDao.selectByExampleWithBLOBs(commentVoExample);
-        Page<CommentVo> Page = new Page<>();
-        return Page.setRecords(commentVos);
+    public IPage<Comment> getCommentsWithPage(String userId, int page, int limit) {
+        QueryWrapper<Comment> commentQueryWrapper = new QueryWrapper<>();
+        commentQueryWrapper.lambda().ne(Comment::getAuthorId, userId);
+        commentQueryWrapper.orderByDesc("coid");
+        return commentMapper.selectPage(new Page<>(page, limit), commentQueryWrapper);
     }
 
     @Override
-    public void update(CommentVo comments) {
+    public void update(Comment comments) {
         if (null != comments && null != comments.getCoid()) {
-            commentDao.updateByPrimaryKeyWithBLOBs(comments);
+            commentMapper.updateById(comments);
         }
     }
 
     @Override
-    public void delete(Integer coid, Integer cid) {
+    public void delete(String coid, String cid) {
         if (null == coid) {
             throw new TipException("主键为空");
         }
-        commentDao.deleteByPrimaryKey(coid);
-        ContentVo contents = contentService.getContents(cid + "");
+        commentMapper.deleteById(coid);
+        Content contents = contentService.getContents(cid + "");
         if (null != contents && contents.getCommentsNum() > 0) {
-            ContentVo temp = new ContentVo();
+            Content temp = new Content();
             temp.setCid(cid);
             temp.setCommentsNum(contents.getCommentsNum() - 1);
             contentService.updateContentByCid(temp);
@@ -120,9 +122,9 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public CommentVo getCommentById(Integer coid) {
+    public Comment getCommentById(String coid) {
         if (null != coid) {
-            return commentDao.selectByPrimaryKey(coid);
+            return commentMapper.selectById(coid);
         }
         return null;
     }

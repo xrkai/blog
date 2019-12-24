@@ -1,11 +1,10 @@
 package com.my.blog.website.module.admin.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.RestResponseBo;
-import com.my.blog.website.modal.Vo.CommentVo;
-import com.my.blog.website.modal.Vo.CommentVoExample;
-import com.my.blog.website.modal.Vo.UserVo;
+import com.my.blog.website.module.admin.entity.Comment;
+import com.my.blog.website.module.admin.entity.User;
 import com.my.blog.website.module.blog.controller.BaseController;
 import com.my.blog.website.service.ICommentService;
 import com.my.blog.website.utils.TaleUtils;
@@ -42,11 +41,8 @@ public class CommentController extends BaseController {
     @GetMapping(value = "")
     public String index(@RequestParam(value = "page", defaultValue = "1") int page,
                         @RequestParam(value = "limit", defaultValue = "15") int limit, HttpServletRequest request) {
-        UserVo users = this.user(request);
-        CommentVoExample commentVoExample = new CommentVoExample();
-        commentVoExample.setOrderByClause("coid desc");
-        commentVoExample.createCriteria().andAuthorIdNotEqualTo(users.getUid());
-        Page<CommentVo> commentsPaginator = commentsService.getCommentsWithPage(commentVoExample, page, limit);
+        User users = this.user(request);
+        IPage<Comment> commentsPaginator = commentsService.getCommentsWithPage(users.getUid(), page, limit);
         request.setAttribute("comments", commentsPaginator);
         return "admin/comment_list";
     }
@@ -60,9 +56,9 @@ public class CommentController extends BaseController {
     @PostMapping(value = "delete")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo delete(@RequestParam Integer coid) {
+    public RestResponseBo delete(@RequestParam String coid) {
         try {
-            CommentVo comments = commentsService.getCommentById(coid);
+            Comment comments = commentsService.getCommentById(coid);
             if (null == comments) {
                 return RestResponseBo.fail("不存在该评论");
             }
@@ -82,9 +78,9 @@ public class CommentController extends BaseController {
     @PostMapping(value = "status")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo delete(@RequestParam Integer coid, @RequestParam String status) {
+    public RestResponseBo delete(@RequestParam String coid, @RequestParam String status) {
         try {
-            CommentVo comments = new CommentVo();
+            Comment comments = new Comment();
             comments.setCoid(coid);
             comments.setStatus(status);
             commentsService.update(comments);
@@ -111,7 +107,7 @@ public class CommentController extends BaseController {
     @PostMapping(value = "")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo reply(@RequestParam Integer coid, @RequestParam String content, HttpServletRequest request) {
+    public RestResponseBo reply(@RequestParam String coid, @RequestParam String content, HttpServletRequest request) {
         if (null == coid || StringUtils.isEmpty(content)) {
             return RestResponseBo.fail("请输入完整后评论");
         }
@@ -119,15 +115,15 @@ public class CommentController extends BaseController {
         if (content.length() > 2000) {
             return RestResponseBo.fail("请输入2000个字符以内的回复");
         }
-        CommentVo c = commentsService.getCommentById(coid);
+        Comment c = commentsService.getCommentById(coid);
         if (null == c) {
             return RestResponseBo.fail("不存在该评论");
         }
-        UserVo users = this.user(request);
+        User users = this.user(request);
         content = TaleUtils.cleanXSS(content);
         content = EmojiParser.parseToAliases(content);
 
-        CommentVo comments = new CommentVo();
+        Comment comments = new Comment();
         comments.setAuthor(users.getUsername());
         comments.setAuthorId(users.getUid());
         comments.setCid(c.getCid());

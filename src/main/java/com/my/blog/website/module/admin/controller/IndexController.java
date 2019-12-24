@@ -7,10 +7,10 @@ import com.my.blog.website.dto.LogActions;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.RestResponseBo;
 import com.my.blog.website.modal.Bo.StatisticsBo;
-import com.my.blog.website.modal.Vo.CommentVo;
-import com.my.blog.website.modal.Vo.ContentVo;
-import com.my.blog.website.modal.Vo.LogVo;
-import com.my.blog.website.modal.Vo.UserVo;
+import com.my.blog.website.module.admin.entity.Comment;
+import com.my.blog.website.module.admin.entity.Content;
+import com.my.blog.website.module.admin.entity.Log;
+import com.my.blog.website.module.admin.entity.User;
 import com.my.blog.website.module.blog.controller.BaseController;
 import com.my.blog.website.service.ILogService;
 import com.my.blog.website.service.ISiteService;
@@ -53,11 +53,11 @@ public class IndexController extends BaseController {
     @GetMapping(value = {"", "/index"})
     public String index(HttpServletRequest request) {
         log.info("Enter admin index method");
-        List<CommentVo> comments = siteService.recentComments(5);
-        List<ContentVo> contents = siteService.recentContents(5);
+        List<Comment> comments = siteService.recentComments(5);
+        List<Content> contents = siteService.recentContents(5);
         StatisticsBo statistics = siteService.getStatistics();
         // 取最新的20条日志
-        List<LogVo> logs = logService.getLogs(1, 5);
+        List<Log> logs = logService.getLogs(1, 5);
 
         request.setAttribute("comments", comments);
         request.setAttribute("articles", contents);
@@ -95,9 +95,9 @@ public class IndexController extends BaseController {
     @Transactional(rollbackFor = TipException.class)
     public RestResponseBo saveProfile(@RequestParam String screenName, @RequestParam String email, HttpServletRequest request, HttpSession session) {
 
-        UserVo users = this.user(request);
+        User users = this.user(request);
         if (StringUtils.isNotEmpty(screenName) && StringUtils.isNotEmpty(email)) {
-            UserVo temp = new UserVo();
+            User temp = new User();
             temp.setUid(users.getUid());
             temp.setScreenName(screenName);
             temp.setEmail(email);
@@ -105,7 +105,7 @@ public class IndexController extends BaseController {
             logService.insertLog(LogActions.UP_INFO.getAction(), JSONObject.toJSONString(temp), request.getRemoteAddr(), this.getUid(request));
 
             //更新session中的数据
-            UserVo original = (UserVo) session.getAttribute(WebConst.LOGIN_SESSION_KEY);
+            User original = (User) session.getAttribute(WebConst.LOGIN_SESSION_KEY);
             original.setScreenName(screenName);
             original.setEmail(email);
             session.setAttribute(WebConst.LOGIN_SESSION_KEY, original);
@@ -120,7 +120,7 @@ public class IndexController extends BaseController {
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
     public RestResponseBo upPwd(@RequestParam String oldPassword, @RequestParam String password, HttpServletRequest request, HttpSession session) {
-        UserVo users = this.user(request);
+        User users = this.user(request);
         if (StringUtils.isEmpty(oldPassword) || StringUtils.isEmpty(password)) {
             return RestResponseBo.fail("请确认信息输入完整");
         }
@@ -133,7 +133,7 @@ public class IndexController extends BaseController {
         }
 
         try {
-            UserVo temp = new UserVo();
+            User temp = new User();
             temp.setUid(users.getUid());
             String pwd = TaleUtils.MD5encode(users.getUsername() + password);
             temp.setPassword(pwd);
@@ -141,7 +141,7 @@ public class IndexController extends BaseController {
             logService.insertLog(LogActions.UP_PWD.getAction(), null, request.getRemoteAddr(), this.getUid(request));
 
             //更新session中的数据
-            UserVo original = (UserVo) session.getAttribute(WebConst.LOGIN_SESSION_KEY);
+            User original = (User) session.getAttribute(WebConst.LOGIN_SESSION_KEY);
             original.setPassword(pwd);
             session.setAttribute(WebConst.LOGIN_SESSION_KEY, original);
             return RestResponseBo.ok();

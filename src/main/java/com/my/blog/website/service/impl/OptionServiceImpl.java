@@ -1,8 +1,7 @@
 package com.my.blog.website.service.impl;
 
-import com.my.blog.website.modal.Vo.OptionVo;
-import com.my.blog.website.modal.Vo.OptionVoExample;
-import com.my.blog.website.module.admin.mapper.OptionVoMapper;
+import com.my.blog.website.module.admin.entity.Option;
+import com.my.blog.website.module.admin.mapper.OptionMapper;
 import com.my.blog.website.service.IOptionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,25 +19,18 @@ import java.util.Map;
 public class OptionServiceImpl implements IOptionService {
 
     @Resource
-    private OptionVoMapper optionDao;
-
-    @Override
-    public void insertOption(OptionVo optionVo) {
-        log.debug("Enter insertOption method:optionVo={}", optionVo);
-        optionDao.insertSelective(optionVo);
-        log.debug("Exit insertOption method.");
-    }
+    private OptionMapper optionMapper;
 
     @Override
     public void insertOption(String name, String value) {
         log.debug("Enter insertOption method:name={},value={}", name, value);
-        OptionVo optionVo = new OptionVo();
+        Option optionVo = new Option();
         optionVo.setName(name);
         optionVo.setValue(value);
-        if (optionDao.selectByExample(new OptionVoExample()).size() == 0) {
-            optionDao.insertSelective(optionVo);
+        if (optionMapper.selectList(null).size() == 0) {
+            optionMapper.insert(optionVo);
         } else {
-            optionDao.updateByPrimaryKeySelective(optionVo);
+            optionMapper.updateById(optionVo);
         }
         log.debug("Exit insertOption method.");
     }
@@ -51,7 +43,7 @@ public class OptionServiceImpl implements IOptionService {
     }
 
     @Override
-    public List<OptionVo> getOptions() {
-        return optionDao.selectByExample(new OptionVoExample());
+    public List<Option> getOptions() {
+        return optionMapper.selectList(null);
     }
 }

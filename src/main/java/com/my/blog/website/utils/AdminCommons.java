@@ -2,7 +2,7 @@ package com.my.blog.website.utils;
 
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.my.blog.website.modal.Vo.MetaVo;
+import com.my.blog.website.module.admin.entity.Meta;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,7 +21,7 @@ public final class AdminCommons {
      * @param cats
      * @return
      */
-    public static boolean exist_cat(MetaVo category, String cats) {
+    public static boolean exist_cat(Meta category, String cats) {
         String[] arr = StringUtils.split(cats, ",");
         if (null != arr && arr.length > 0) {
             for (String c : arr) {

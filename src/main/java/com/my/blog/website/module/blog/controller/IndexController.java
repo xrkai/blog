@@ -1,5 +1,6 @@
 package com.my.blog.website.module.blog.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.my.blog.website.constant.WebConst;
@@ -10,9 +11,9 @@ import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.ArchiveBo;
 import com.my.blog.website.modal.Bo.CommentBo;
 import com.my.blog.website.modal.Bo.RestResponseBo;
-import com.my.blog.website.modal.Vo.CommentVo;
-import com.my.blog.website.modal.Vo.ContentVo;
-import com.my.blog.website.modal.Vo.MetaVo;
+import com.my.blog.website.module.admin.entity.Comment;
+import com.my.blog.website.module.admin.entity.Content;
+import com.my.blog.website.module.admin.entity.Meta;
 import com.my.blog.website.service.ICommentService;
 import com.my.blog.website.service.IContentService;
 import com.my.blog.website.service.IMetaService;
@@ -75,7 +76,7 @@ public class IndexController extends BaseController {
     @GetMapping(value = "page/{p}")
     public String index(HttpServletRequest request, @PathVariable int p, @RequestParam(value = "limit", defaultValue = "12") int limit) {
         p = p < 0 || p > WebConst.MAX_PAGE ? 1 : p;
-        Page<ContentVo> articles = contentService.getContents(p, limit);
+        IPage<Content> articles = contentService.getContents(p, limit);
         request.setAttribute("articles", articles);
         if (p > 1) {
             this.title(request, "第" + p + "页");
@@ -92,7 +93,7 @@ public class IndexController extends BaseController {
      */
     @GetMapping(value = {"article/{cid}", "article/{cid}.html"})
     public String getArticle(HttpServletRequest request, @PathVariable String cid) {
-        ContentVo contents = contentService.getContents(cid);
+        Content contents = contentService.getContents(cid);
         if (null == contents || "draft".equals(contents.getStatus())) {
             return this.render_404();
         }
@@ -112,7 +113,7 @@ public class IndexController extends BaseController {
      */
     @GetMapping(value = {"article/{cid}/preview", "article/{cid}.html"})
     public String articlePreview(HttpServletRequest request, @PathVariable String cid) {
-        ContentVo contents = contentService.getContents(cid);
+        Content contents = contentService.getContents(cid);
         if (null == contents) {
             return this.render_404();
         }
@@ -129,7 +130,7 @@ public class IndexController extends BaseController {
      * @param request
      * @param contents
      */
-    private void completeArticle(HttpServletRequest request, ContentVo contents) {
+    private void completeArticle(HttpServletRequest request, Content contents) {
         if (contents.getAllowComment()) {
             String cp = request.getParameter("cp");
             if (StringUtils.isEmpty(cp)) {
@@ -159,7 +160,7 @@ public class IndexController extends BaseController {
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
     public RestResponseBo comment(HttpServletRequest request, HttpServletResponse response,
-                                  @RequestParam Integer cid, @RequestParam Integer coid,
+                                  @RequestParam String cid, @RequestParam String coid,
                                   @RequestParam String author, @RequestParam String mail,
                                   @RequestParam String url, @RequestParam String text, @RequestParam String _csrf_token) {
 
@@ -205,7 +206,7 @@ public class IndexController extends BaseController {
         author = EmojiParser.parseToAliases(author);
         text = EmojiParser.parseToAliases(text);
 
-        CommentVo comments = new CommentVo();
+        Comment comments = new Comment();
         comments.setAuthor(author);
         comments.setCid(cid);
         comments.setIp(request.getRemoteAddr());
@@ -254,7 +255,7 @@ public class IndexController extends BaseController {
             return this.render_404();
         }
 
-        Page<ContentVo> contentsPaginator = contentService.getArticles(metaDto.getMid(), page, limit);
+        IPage<Content> contentsPaginator = contentService.getArticles(metaDto.getMid(), page, limit);
 
         request.setAttribute("articles", contentsPaginator);
         request.setAttribute("meta", metaDto);
@@ -284,7 +285,7 @@ public class IndexController extends BaseController {
      */
     @GetMapping(value = "links")
     public String links(HttpServletRequest request) {
-        List<MetaVo> links = metaService.getMetas(Types.LINK.getType());
+        List<Meta> links = metaService.getMetas(Types.LINK.getType());
         request.setAttribute("links", links);
         return this.render("links");
     }
@@ -294,7 +295,7 @@ public class IndexController extends BaseController {
      */
     @GetMapping(value = "/{pagename}")
     public String page(@PathVariable String pagename, HttpServletRequest request) {
-        ContentVo contents = contentService.getContents(pagename);
+        Content contents = contentService.getContents(pagename);
         if (null == contents) {
             return this.render_404();
         }
@@ -326,7 +327,7 @@ public class IndexController extends BaseController {
     @GetMapping(value = "search/{keyword}/{page}")
     public String search(HttpServletRequest request, @PathVariable String keyword, @PathVariable int page, @RequestParam(value = "limit", defaultValue = "12") int limit) {
         page = page < 0 || page > WebConst.MAX_PAGE ? 1 : page;
-        Page<ContentVo> articles = contentService.getArticles(keyword, page, limit);
+        IPage<Content> articles = contentService.getArticles(keyword, page, limit);
         request.setAttribute("articles", articles);
         request.setAttribute("type", "搜索");
         request.setAttribute("keyword", keyword);
@@ -340,14 +341,14 @@ public class IndexController extends BaseController {
      * @param chits
      */
     @Transactional(rollbackFor = TipException.class)
-    public void updateArticleHit(Integer cid, Integer chits) {
+    public void updateArticleHit(String cid, String chits) {
         Integer hits = cache.hget("article", "hits");
-        if (chits == null) {
-            chits = 0;
+        if (StringUtils.isEmpty(chits)) {
+            chits = "0";
         }
         hits = null == hits ? 1 : hits + 1;
         if (hits >= WebConst.HIT_EXCEED) {
-            ContentVo temp = new ContentVo();
+            Content temp = new Content();
             temp.setCid(cid);
             temp.setHits(chits + hits);
             contentService.updateContentByCid(temp);
@@ -388,7 +389,7 @@ public class IndexController extends BaseController {
             return this.render_404();
         }
 
-        Page<ContentVo> contentsPaginator = contentService.getArticles(metaDto.getMid(), page, limit);
+        IPage<Content> contentsPaginator = contentService.getArticles(metaDto.getMid(), page, limit);
         request.setAttribute("articles", contentsPaginator);
         request.setAttribute("meta", metaDto);
         request.setAttribute("type", "标签");

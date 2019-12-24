@@ -4,7 +4,7 @@ import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.dto.LogActions;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.RestResponseBo;
-import com.my.blog.website.modal.Vo.UserVo;
+import com.my.blog.website.module.admin.entity.User;
 import com.my.blog.website.module.blog.controller.BaseController;
 import com.my.blog.website.service.ILogService;
 import com.my.blog.website.service.IUserService;
@@ -64,7 +64,7 @@ public class AuthController extends BaseController {
 
         Integer error_count = cache.get("login_error_count");
         try {
-            UserVo user = usersService.login(username, password);
+            User user = usersService.login(username, password);
             request.getSession().setAttribute(WebConst.LOGIN_SESSION_KEY, user);
             if (!StringUtils.isEmpty(remeber_me)) {
                 TaleUtils.setCookie(response, user.getUid());

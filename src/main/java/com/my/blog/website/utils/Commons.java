@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.dto.MetaDto;
 import com.my.blog.website.dto.Types;
-import com.my.blog.website.modal.Vo.CommentVo;
-import com.my.blog.website.modal.Vo.ContentVo;
+import com.my.blog.website.module.admin.entity.Comment;
+import com.my.blog.website.module.admin.entity.Content;
 import com.my.blog.website.service.ISiteService;
 import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Component;
@@ -172,7 +172,7 @@ public final class Commons {
      * @param contents
      * @return
      */
-    public static String permalink(ContentVo contents) {
+    public static String permalink(Content contents) {
         return permalink(contents.getCid(), contents.getSlug());
     }
 
@@ -194,8 +194,8 @@ public final class Commons {
      * @param slug
      * @return
      */
-    public static String permalink(Integer cid, String slug) {
-        return site_url("/article/" + (StringUtils.isNotEmpty(slug) ? slug : cid.toString()));
+    public static String permalink(String cid, String slug) {
+        return site_url("/article/" + (StringUtils.isNotEmpty(slug) ? slug : cid));
     }
 
     /**
@@ -298,9 +298,9 @@ public final class Commons {
      *
      * @return
      */
-    public static String show_thumb(ContentVo contents) {
-        int cid = contents.getCid();
-        int size = cid % 20;
+    public static String show_thumb(Content contents) {
+        String cid = contents.getCid();
+        int size = Integer.parseInt(cid) % 20;
         size = size == 0 ? 1 : size;
         return "/user/img/rand/" + size + ".jpg";
     }
@@ -311,7 +311,7 @@ public final class Commons {
      * @param limit
      * @return
      */
-    public static List<ContentVo> recent_articles(int limit) {
+    public static List<Content> recent_articles(int limit) {
         if (null == siteService) {
             return EMPTY;
         }
@@ -324,7 +324,7 @@ public final class Commons {
      * @param limit
      * @return
      */
-    public static List<CommentVo> recent_comments(int limit) {
+    public static List<Comment> recent_comments(int limit) {
         if (null == siteService) {
             return EMPTY;
         }
@@ -374,7 +374,7 @@ public final class Commons {
      * @return
      */
     public static String comment_at(Integer coid) {
-        CommentVo comments = siteService.getComment(coid);
+        Comment comments = siteService.getComment(coid);
         if (null != comments) {
             return "<a href=\"#comment-" + coid + "\">@" + comments.getAuthor() + "</a>";
         }

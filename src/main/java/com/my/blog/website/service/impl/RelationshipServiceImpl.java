@@ -1,8 +1,9 @@
 package com.my.blog.website.service.impl;
 
-import com.my.blog.website.modal.Vo.RelationshipVoExample;
-import com.my.blog.website.modal.Vo.RelationshipVoKey;
-import com.my.blog.website.module.admin.mapper.RelationshipVoMapper;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.my.blog.website.module.admin.entity.Relationship;
+import com.my.blog.website.module.admin.mapper.RelationshipMapper;
 import com.my.blog.website.service.IRelationshipService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,52 +19,39 @@ import java.util.List;
 public class RelationshipServiceImpl implements IRelationshipService {
 
     @Resource
-    private RelationshipVoMapper relationshipVoMapper;
+    private RelationshipMapper relationshipMapper;
 
     @Override
-    public void deleteById(Integer cid, Integer mid) {
-        RelationshipVoExample relationshipVoExample = new RelationshipVoExample();
-        RelationshipVoExample.Criteria criteria = relationshipVoExample.createCriteria();
-        if (cid != null) {
-            criteria.andCidEqualTo(cid);
-        }
-        if (mid != null) {
-            criteria.andMidEqualTo(mid);
-        }
-        relationshipVoMapper.deleteByExample(relationshipVoExample);
+    public void deleteById(String cid, String mid) {
+        relationshipMapper.delete(getQueryWrapperByCidAndMid(cid, mid));
     }
 
     @Override
-    public List<RelationshipVoKey> getRelationshipById(Integer cid, Integer mid) {
-        RelationshipVoExample relationshipVoExample = new RelationshipVoExample();
-        RelationshipVoExample.Criteria criteria = relationshipVoExample.createCriteria();
-        if (cid != null) {
-            criteria.andCidEqualTo(cid);
-        }
-        if (mid != null) {
-            criteria.andMidEqualTo(mid);
-        }
-        return relationshipVoMapper.selectByExample(relationshipVoExample);
+    public List<Relationship> getRelationshipById(String cid, String mid) {
+        return relationshipMapper.selectList(getQueryWrapperByCidAndMid(cid, mid));
     }
 
     @Override
-    public void insertVo(RelationshipVoKey relationshipVoKey) {
-        relationshipVoMapper.insert(relationshipVoKey);
+    public void insertVo(Relationship relationship) {
+        relationshipMapper.insert(relationship);
     }
 
     @Override
-    public Long countById(Integer cid, Integer mid) {
+    public Long countById(String cid, String mid) {
         log.debug("Enter countById method:cid={},mid={}", cid, mid);
-        RelationshipVoExample relationshipVoExample = new RelationshipVoExample();
-        RelationshipVoExample.Criteria criteria = relationshipVoExample.createCriteria();
-        if (cid != null) {
-            criteria.andCidEqualTo(cid);
-        }
-        if (mid != null) {
-            criteria.andMidEqualTo(mid);
-        }
-        long num = relationshipVoMapper.countByExample(relationshipVoExample);
+        long num = relationshipMapper.selectCount(getQueryWrapperByCidAndMid(cid, mid));
         log.debug("Exit countById method return num={}", num);
         return num;
+    }
+
+    private QueryWrapper<Relationship> getQueryWrapperByCidAndMid(String cid, String mid) {
+        QueryWrapper<Relationship> relationshipQueryWrapper = new QueryWrapper<>();
+        if (cid != null) {
+            relationshipQueryWrapper.lambda().eq(Relationship::getCid, cid);
+        }
+        if (mid != null) {
+            relationshipQueryWrapper.lambda().eq(Relationship::getMid, mid);
+        }
+        return relationshipQueryWrapper;
     }
 }

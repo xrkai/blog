@@ -1,16 +1,16 @@
 package com.my.blog.website.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.my.blog.website.modal.Vo.AttachVo;
-import com.my.blog.website.modal.Vo.AttachVoExample;
-import com.my.blog.website.module.admin.mapper.AttachVoMapper;
+import com.my.blog.website.module.admin.entity.Attach;
+import com.my.blog.website.module.admin.mapper.AttachMapper;
 import com.my.blog.website.service.IAttachService;
 import com.my.blog.website.utils.DateKit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * Created by wangq on 2017/3/20.
@@ -20,40 +20,38 @@ import java.util.List;
 public class AttachServiceImpl implements IAttachService {
 
     @Resource
-    private AttachVoMapper attachDao;
+    private AttachMapper attachMapper;
 
     @Override
-    public Page<AttachVo> getAttachs(Integer page, Integer limit) {
-        AttachVoExample attachVoExample = new AttachVoExample();
-        attachVoExample.setOrderByClause("id desc");
-        List<AttachVo> attachVos = attachDao.selectByExample(attachVoExample);
-        Page<AttachVo> pageList = new Page<>();
-        return pageList.setRecords(attachVos);
+    public IPage<Attach> getAttachs(Integer page, Integer limit) {
+        QueryWrapper<Attach> attachQueryWrapper = new QueryWrapper<>();
+        attachQueryWrapper.orderByDesc("id");
+        return attachMapper.selectPage(new Page<>(page, limit), attachQueryWrapper);
     }
 
     @Override
-    public AttachVo selectById(Integer id) {
+    public Attach selectById(Integer id) {
         if (null != id) {
-            return attachDao.selectByPrimaryKey(id);
+            return attachMapper.selectById(id);
         }
         return null;
     }
 
     @Override
-    public void save(String fname, String fkey, String ftype, Integer author) {
-        AttachVo attach = new AttachVo();
+    public void save(String fname, String fkey, String ftype, String author) {
+        Attach attach = new Attach();
         attach.setFname(fname);
         attach.setAuthorId(author);
         attach.setFkey(fkey);
         attach.setFtype(ftype);
         attach.setCreated(DateKit.getCurrentUnixTime());
-        attachDao.insertSelective(attach);
+        attachMapper.insert(attach);
     }
 
     @Override
     public void deleteById(Integer id) {
         if (null != id) {
-            attachDao.deleteByPrimaryKey(id);
+            attachMapper.deleteById(id);
         }
     }
 }
