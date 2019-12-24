@@ -80,7 +80,7 @@
                                 <div class="col-md-2 text-center m-t-10">
                                     <a target="_blank" th:href="${commons.site_url(attach.fkey)}">
                                         <img class="attach-img"
-                                             th:src="@{${attach.ftype == 'image'}?${attach.fkey}: '/admin/images/attach.png'}"
+                                             th:src="@{${attach.ftype == 'image'}?${attach.fkey}: '/static/admin/images/attach.png'}"
                                              th:title="${attach.fname}"/>
                                     </a>
                                     <div class="clearfix m-t-10">
@@ -117,7 +117,7 @@
 <script th:inline="javascript" type="text/javascript">
     /*<![CDATA[*/
     var tale = new $.tale();
-
+    Dropzone.autoDiscover = false;
     $("#dropzone").dropzone({
         paramName: "file",
         url: "/admin/attach/upload",

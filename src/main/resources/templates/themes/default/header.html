@@ -10,13 +10,13 @@
     <meta content="no-siteapp" http-equiv="Cache-Control"/>
     <meta name="keywords" th:content="${keywords ?: commons.site_option('site_keywords')}"/>
     <meta name="description" th:content="${description ?:commons.site_option('site_description')}"/>
-    <link rel="shortcut icon" th:href="@{/user/img/favicon.png}"/>
-    <link rel="apple-touch-icon" th:href="@{/user/img/apple-touch-icon.png}"/>
+    <link rel="shortcut icon" th:href="@{/static/user/img/favicon.png}"/>
+    <link rel="apple-touch-icon" th:href="@{/static/user/img/apple-touch-icon.png}"/>
     <title>
         <th:block th:text="${title ?: '首页'}+' - '+${commons.site_option('site_title','My Blog')}"></th:block>
     </title>
     <link rel="stylesheet" th:href="@{//cdn.bootcss.com/highlight.js/9.9.0/styles/xcode.min.css}"/>
-    <link rel="stylesheet" th:href="@{/user/css/style.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/user/css/style.min.css}"/>
     <script th:src="@{//cdn.bootcss.com/jquery/2.2.3/jquery.min.js}"></script>
 
     <!--[if lt IE 9]>
@@ -33,7 +33,7 @@
 <header class="header bg-white" id="header">
     <div class="navbar-container">
         <a class="navbar-logo" th:href="${commons.site_url('/')}">
-            <img alt="首页" th:src="@{/user/img/logo.png}"/>
+            <img alt="首页" th:src="@{/static/user/img/logo.png}"/>
         </a>
         <div class="navbar-menu">
             <a th:href="${commons.site_url('/archives')}">归档</a>

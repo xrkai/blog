@@ -32,5 +32,6 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/upload/**").addResourceLocations("file:" + TaleUtils.getUplodFilePath() + "upload/");
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
     }
 }

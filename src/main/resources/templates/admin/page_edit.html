@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="title='保存页面',active='page'">
+<html lang="en" th:with="title='保存页面',active='page'" xmlns:th="http://www.thymeleaf.org">
 <header th:replace="admin/header::headerFragment(${title},${active})"></header>
-<link th:href="@{/admin/plugins/toggles/toggles.css}" rel="stylesheet"/>
-<link th:href="@{/admin/plugins/md/css/style.css}" rel="stylesheet"/>
+<link rel="stylesheet" th:href="@{/static/admin/plugins/toggles/toggles.css}"/>
+<link rel="stylesheet" th:href="@{/static/admin/plugins/md/css/style.css}"/>
 <body class="fixed-left">
 <div id="wrapper">
     <div th:replace="admin/header::header-body"></div>
@@ -21,29 +21,39 @@
                         </h4>
                     </div>
                     <div class="col-md-12">
-                        <form id="articleForm" role="form" novalidate="novalidate">
-                            <input type="hidden" name="categories" id="categories"/>
-                            <input type="hidden" name="cid" th:value="${contents!=null and contents.cid!=null}?${contents.cid}: ''" id="cid"/>
-                            <input type="hidden" name="status" th:value="${contents!=null and contents.status !=null}?${contents.status}: 'publish'" id="status"/>
-                            <input type="hidden" name="content" id="content-editor"/>
+                        <form id="articleForm" novalidate="novalidate" role="form">
+                            <input id="categories" name="categories" type="hidden"/>
+                            <input id="cid" name="cid"
+                                   th:value="${contents!=null and contents.cid!=null}?${contents.cid}: ''"
+                                   type="hidden"/>
+                            <input id="status" name="status"
+                                   th:value="${contents!=null and contents.status !=null}?${contents.status}: 'publish'"
+                                   type="hidden"/>
+                            <input id="content-editor" name="content" type="hidden"/>
 
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="请输入页面标题" name="title" required=""
-                                       aria-required="true"  th:value="${contents!=null and contents.title!=null }?${contents.title}: ''"/>
+                                <input aria-required="true" class="form-control" name="title" placeholder="请输入页面标题"
+                                       required=""
+                                       th:value="${contents!=null and contents.title!=null }?${contents.title}: ''"
+                                       type="text"/>
                             </div>
 
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="请输入页面访问名" name="slug" required=""
-                                       aria-required="true" th:value="${contents!=null and contents.slug !=null}?${contents.slug}: ''"/>
+                                <input aria-required="true" class="form-control" name="slug" placeholder="请输入页面访问名"
+                                       required=""
+                                       th:value="${contents!=null and contents.slug !=null}?${contents.slug}: ''"
+                                       type="text"/>
                             </div>
 
                             <div class="form-group">
-                                <textarea style="height: 450px" autocomplete="off" id="text" name="text" class="markdown-textarea" th:utext="${contents!=null and contents.content !=null}?${contents.content}: ''"></textarea>
+                                <textarea autocomplete="off" class="markdown-textarea" id="text" name="text"
+                                          style="height: 450px"
+                                          th:utext="${contents!=null and contents.content !=null}?${contents.content}: ''"></textarea>
                             </div>
 
                             <div class="text-right">
-                                <button type="submit" class="btn btn-primary waves-effect waves-light">保存页面</button>
-                                <button type="submit" class="btn btn-warning waves-effect waves-light">存为草稿</button>
+                                <button class="btn btn-primary waves-effect waves-light" type="submit">保存页面</button>
+                                <button class="btn btn-warning waves-effect waves-light" type="submit">存为草稿</button>
                             </div>
                         </form>
                     </div>
@@ -55,11 +65,11 @@
     </div>
 </div>
 <div th:replace="admin/footer :: footer"></div>
-<script th:src="@{/admin/plugins/md/js/jquery.scrollto.js}"></script>
-<script th:src="@{/admin/plugins/md/js/pagedown.js}"></script>
-<script th:src="@{/admin/plugins/md/js/pagedown-extra.js}"></script>
-<script th:src="@{/admin/plugins/md/js/diff.js}"></script>
-<script th:src="@{/admin/plugins/md/js/md.js}"></script>
+<script th:src="@{/static/admin/plugins/md/js/jquery.scrollto.js}"></script>
+<script th:src="@{/static/admin/plugins/md/js/pagedown.js}"></script>
+<script th:src="@{/static/admin/plugins/md/js/pagedown-extra.js}"></script>
+<script th:src="@{/static/admin/plugins/md/js/diff.js}"></script>
+<script th:src="@{/static/admin/plugins/md/js/md.js}"></script>
 
 <script th:src="@{//cdn.bootcss.com/jquery-toggles/2.0.4/toggles.min.js}"></script>
 <script th:src="@{//cdn.bootcss.com/jquery-validate/1.15.1/jquery.validate.min.js}"></script>
@@ -76,12 +86,12 @@
             var url = $('#articleForm #cid').val() != '' ? '/admin/page/modify' : '/admin/page/publish';
 
             tale.post({
-                url:url,
-                data:params,
+                url: url,
+                data: params,
                 success: function (result) {
                     if (result && result.success) {
                         tale.alertOk({
-                            text:'页面保存成功',
+                            text: '页面保存成功',
                             then: function () {
                                 setTimeout(function () {
                                     window.location.href = '/admin/page';

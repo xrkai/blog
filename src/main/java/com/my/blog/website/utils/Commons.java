@@ -302,7 +302,7 @@ public final class Commons {
         String cid = contents.getCid();
         int size = Integer.parseInt(cid) % 20;
         size = size == 0 ? 1 : size;
-        return "/user/img/rand/" + size + ".jpg";
+        return "/static/user/img/rand/" + size + ".jpg";
     }
 
     /**
