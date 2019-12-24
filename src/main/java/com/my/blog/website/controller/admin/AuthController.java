@@ -11,11 +11,11 @@ import com.my.blog.website.service.IUserService;
 import com.my.blog.website.utils.Commons;
 import com.my.blog.website.utils.TaleUtils;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -48,6 +48,7 @@ public class AuthController extends BaseController {
 
     /**
      * 管理后台登录
+     *
      * @param username
      * @param password
      * @param remeber_me
@@ -67,7 +68,7 @@ public class AuthController extends BaseController {
         try {
             UserVo user = usersService.login(username, password);
             request.getSession().setAttribute(WebConst.LOGIN_SESSION_KEY, user);
-            if (StringUtils.isNotBlank(remeber_me)) {
+            if (!StringUtils.isEmpty(remeber_me)) {
                 TaleUtils.setCookie(response, user.getUid());
             }
             logService.insertLog(LogActions.LOGIN.getAction(), null, request.getRemoteAddr(), user.getUid());
@@ -90,6 +91,7 @@ public class AuthController extends BaseController {
 
     /**
      * 注销
+     *
      * @param session
      * @param response
      */

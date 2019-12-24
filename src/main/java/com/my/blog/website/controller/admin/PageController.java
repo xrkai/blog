@@ -1,17 +1,17 @@
 package com.my.blog.website.controller.admin;
 
-import com.github.pagehelper.PageInfo;
-import com.my.blog.website.exception.TipException;
-import com.my.blog.website.modal.Bo.RestResponseBo;
-import com.my.blog.website.modal.Vo.UserVo;
-import com.my.blog.website.service.ILogService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.controller.BaseController;
 import com.my.blog.website.dto.LogActions;
 import com.my.blog.website.dto.Types;
+import com.my.blog.website.exception.TipException;
+import com.my.blog.website.modal.Bo.RestResponseBo;
 import com.my.blog.website.modal.Vo.ContentVo;
 import com.my.blog.website.modal.Vo.ContentVoExample;
+import com.my.blog.website.modal.Vo.UserVo;
 import com.my.blog.website.service.IContentService;
+import com.my.blog.website.service.ILogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -41,7 +41,7 @@ public class PageController extends BaseController {
         ContentVoExample contentVoExample = new ContentVoExample();
         contentVoExample.setOrderByClause("created desc");
         contentVoExample.createCriteria().andTypeEqualTo(Types.PAGE.getType());
-        PageInfo<ContentVo> contentsPaginator = contentsService.getArticlesWithpage(contentVoExample, 1, WebConst.MAX_POSTS);
+        Page<ContentVo> contentsPaginator = contentsService.getArticlesWithpage(contentVoExample, 1, WebConst.MAX_POSTS);
         request.setAttribute("articles", contentsPaginator);
         return "admin/page_list";
     }

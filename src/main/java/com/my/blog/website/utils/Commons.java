@@ -1,15 +1,15 @@
 package com.my.blog.website.utils;
 
 
-import com.github.pagehelper.PageInfo;
-import com.my.blog.website.service.ISiteService;
-import com.vdurmont.emoji.EmojiParser;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.dto.MetaDto;
 import com.my.blog.website.dto.Types;
 import com.my.blog.website.modal.Vo.CommentVo;
 import com.my.blog.website.modal.Vo.ContentVo;
-import org.apache.commons.lang3.StringUtils;
+import com.my.blog.website.service.ISiteService;
+import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
@@ -29,16 +29,14 @@ import java.util.regex.Pattern;
 @Component
 public final class Commons {
 
-    private static ISiteService siteService;
-
-    public static String THEME = "themes/default";
-
     private static final List EMPTY = new ArrayList(0);
+    private static final String[] ICONS = {"bg-ico-book", "bg-ico-game", "bg-ico-note", "bg-ico-chat", "bg-ico-code", "bg-ico-image", "bg-ico-web", "bg-ico-link", "bg-ico-design", "bg-ico-lock"};
+    public static String THEME = "themes/default";
+    private static ISiteService siteService;
 
     public static void setSiteService(ISiteService ss) {
         siteService = ss;
     }
-
 
     /**
      * 判断分页中是否有数据
@@ -46,8 +44,8 @@ public final class Commons {
      * @param paginator
      * @return
      */
-    public static boolean is_empty(PageInfo paginator) {
-        return paginator == null || (paginator.getList() == null) || (paginator.getList().size() == 0);
+    public static boolean is_empty(Page paginator) {
+        return paginator == null || (paginator.getRecords() == null) || (paginator.getRecords().size() == 0);
     }
 
     /**
@@ -65,6 +63,7 @@ public final class Commons {
 
     /**
      * 在管理员页面退出登录返回到登录界面
+     *
      * @return
      */
     public static String site_login() {
@@ -108,11 +107,11 @@ public final class Commons {
      * @return
      */
     public static String site_option(String key, String defalutValue) {
-        if (StringUtils.isBlank(key)) {
+        if (StringUtils.isEmpty(key)) {
             return "";
         }
         String str = WebConst.initConfig.get(key);
-        if (StringUtils.isNotBlank(str)) {
+        if (StringUtils.isNotEmpty(str)) {
             return str;
         } else {
             return defalutValue;
@@ -160,7 +159,7 @@ public final class Commons {
      */
     public static String gravatar(String email) {
         String avatarUrl = "https://secure.gravatar.com/avatar";
-        if (StringUtils.isBlank(email)) {
+        if (StringUtils.isEmpty(email)) {
             return avatarUrl;
         }
         String hash = TaleUtils.MD5encode(email.trim().toLowerCase());
@@ -176,7 +175,6 @@ public final class Commons {
     public static String permalink(ContentVo contents) {
         return permalink(contents.getCid(), contents.getSlug());
     }
-
 
     /**
      * 获取随机数
@@ -197,7 +195,7 @@ public final class Commons {
      * @return
      */
     public static String permalink(Integer cid, String slug) {
-        return site_url("/article/" + (StringUtils.isNotBlank(slug) ? slug : cid.toString()));
+        return site_url("/article/" + (StringUtils.isNotEmpty(slug) ? slug : cid.toString()));
     }
 
     /**
@@ -218,7 +216,7 @@ public final class Commons {
      * @return
      */
     public static String fmtdate(Integer unixTime, String patten) {
-        if (null != unixTime && StringUtils.isNotBlank(patten)) {
+        if (null != unixTime && StringUtils.isNotEmpty(patten)) {
             return DateKit.formatDateByUnixTime(unixTime, patten);
         }
         return "";
@@ -231,7 +229,7 @@ public final class Commons {
      * @return
      */
     public static String show_categories(String categories) throws UnsupportedEncodingException {
-        if (StringUtils.isNotBlank(categories)) {
+        if (StringUtils.isNotEmpty(categories)) {
             String[] arr = categories.split(",");
             StringBuffer sbuf = new StringBuffer();
             for (String c : arr) {
@@ -249,7 +247,7 @@ public final class Commons {
      * @return
      */
     public static String show_tags(String tags) throws UnsupportedEncodingException {
-        if (StringUtils.isNotBlank(tags)) {
+        if (StringUtils.isNotEmpty(tags)) {
             String[] arr = tags.split(",");
             StringBuffer sbuf = new StringBuffer();
             for (String c : arr) {
@@ -288,7 +286,7 @@ public final class Commons {
      * @return
      */
     public static String article(String value) {
-        if (StringUtils.isNotBlank(value)) {
+        if (StringUtils.isNotEmpty(value)) {
             value = value.replace("<!--more-->", "\r\n");
             return TaleUtils.mdToHtml(value);
         }
@@ -418,8 +416,6 @@ public final class Commons {
         }
         return "";
     }
-
-    private static final String[] ICONS = {"bg-ico-book", "bg-ico-game", "bg-ico-note", "bg-ico-chat", "bg-ico-code", "bg-ico-image", "bg-ico-web", "bg-ico-link", "bg-ico-design", "bg-ico-lock"};
 
     /**
      * 显示文章图标

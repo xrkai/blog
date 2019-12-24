@@ -1,8 +1,9 @@
 package com.my.blog.website.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.my.blog.website.constant.WebConst;
+import com.my.blog.website.dao.ContentVoMapper;
 import com.my.blog.website.dao.MetaVoMapper;
 import com.my.blog.website.dto.Types;
 import com.my.blog.website.exception.TipException;
@@ -15,8 +16,6 @@ import com.my.blog.website.utils.DateKit;
 import com.my.blog.website.utils.TaleUtils;
 import com.my.blog.website.utils.Tools;
 import com.vdurmont.emoji.EmojiParser;
-import com.my.blog.website.dao.ContentVoMapper;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -48,10 +47,10 @@ public class ContentServiceImpl implements IContentService {
         if (null == contents) {
             throw new TipException("文章对象为空");
         }
-        if (StringUtils.isBlank(contents.getTitle())) {
+        if (StringUtils.isEmpty(contents.getTitle())) {
             throw new TipException("文章标题不能为空");
         }
-        if (StringUtils.isBlank(contents.getContent())) {
+        if (StringUtils.isEmpty(contents.getContent())) {
             throw new TipException("文章内容不能为空");
         }
         int titleLength = contents.getTitle().length();
@@ -65,15 +64,19 @@ public class ContentServiceImpl implements IContentService {
         if (null == contents.getAuthorId()) {
             throw new TipException("请登录后发布文章");
         }
-        if (StringUtils.isNotBlank(contents.getSlug())) {
+        if (StringUtils.isNotEmpty(contents.getSlug())) {
             if (contents.getSlug().length() < 5) {
                 throw new TipException("路径太短了");
             }
-            if (!TaleUtils.isPath(contents.getSlug())) throw new TipException("您输入的路径不合法");
+            if (!TaleUtils.isPath(contents.getSlug())) {
+                throw new TipException("您输入的路径不合法");
+            }
             ContentVoExample contentVoExample = new ContentVoExample();
             contentVoExample.createCriteria().andTypeEqualTo(contents.getType()).andStatusEqualTo(contents.getSlug());
             long count = contentDao.countByExample(contentVoExample);
-            if (count > 0) throw new TipException("该路径已经存在，请重新输入");
+            if (count > 0) {
+                throw new TipException("该路径已经存在，请重新输入");
+            }
         } else {
             contents.setSlug(null);
         }
@@ -96,21 +99,21 @@ public class ContentServiceImpl implements IContentService {
     }
 
     @Override
-    public PageInfo<ContentVo> getContents(Integer p, Integer limit) {
+    public Page<ContentVo> getContents(Integer p, Integer limit) {
         LOGGER.debug("Enter getContents method");
         ContentVoExample example = new ContentVoExample();
         example.setOrderByClause("created desc");
         example.createCriteria().andTypeEqualTo(Types.ARTICLE.getType()).andStatusEqualTo(Types.PUBLISH.getType());
-        PageHelper.startPage(p, limit);
+        Page<ContentVo> page = new Page<>();
         List<ContentVo> data = contentDao.selectByExampleWithBLOBs(example);
-        PageInfo<ContentVo> pageInfo = new PageInfo<>(data);
+        page.setRecords(data);
         LOGGER.debug("Exit getContents method");
-        return pageInfo;
+        return page;
     }
 
     @Override
     public ContentVo getContents(String id) {
-        if (StringUtils.isNotBlank(id)) {
+        if (StringUtils.isNotEmpty(id)) {
             if (Tools.isNumber(id)) {
                 ContentVo contentVo = contentDao.selectByPrimaryKey(Integer.valueOf(id));
                 if (contentVo != null) {
@@ -139,18 +142,17 @@ public class ContentServiceImpl implements IContentService {
     }
 
     @Override
-    public PageInfo<ContentVo> getArticles(Integer mid, int page, int limit) {
+    public Page<ContentVo> getArticles(Integer mid, int page, int limit) {
         int total = metaDao.countWithSql(mid);
-        PageHelper.startPage(page, limit);
         List<ContentVo> list = contentDao.findByCatalog(mid);
-        PageInfo<ContentVo> paginator = new PageInfo<>(list);
+        Page<ContentVo> paginator = new Page<>();
         paginator.setTotal(total);
+        paginator.setRecords(list);
         return paginator;
     }
 
     @Override
-    public PageInfo<ContentVo> getArticles(String keyword, Integer page, Integer limit) {
-        PageHelper.startPage(page, limit);
+    public Page<ContentVo> getArticles(String keyword, Integer page, Integer limit) {
         ContentVoExample contentVoExample = new ContentVoExample();
         ContentVoExample.Criteria criteria = contentVoExample.createCriteria();
         criteria.andTypeEqualTo(Types.ARTICLE.getType());
@@ -158,14 +160,15 @@ public class ContentServiceImpl implements IContentService {
         criteria.andTitleLike("%" + keyword + "%");
         contentVoExample.setOrderByClause("created desc");
         List<ContentVo> contentVos = contentDao.selectByExampleWithBLOBs(contentVoExample);
-        return new PageInfo<>(contentVos);
+        Page<ContentVo> pageList = new Page<>();
+        return pageList.setRecords(contentVos);
     }
 
     @Override
-    public PageInfo<ContentVo> getArticlesWithpage(ContentVoExample commentVoExample, Integer page, Integer limit) {
-        PageHelper.startPage(page, limit);
+    public Page<ContentVo> getArticlesWithpage(ContentVoExample commentVoExample, Integer page, Integer limit) {
         List<ContentVo> contentVos = contentDao.selectByExampleWithBLOBs(commentVoExample);
-        return new PageInfo<>(contentVos);
+        Page<ContentVo> pagelist = new Page<>();
+        return pagelist.setRecords(contentVos);
     }
 
     @Override
@@ -191,10 +194,10 @@ public class ContentServiceImpl implements IContentService {
         if (null == contents || null == contents.getCid()) {
             throw new TipException("文章对象不能为空");
         }
-        if (StringUtils.isBlank(contents.getTitle())) {
+        if (StringUtils.isEmpty(contents.getTitle())) {
             throw new TipException("文章标题不能为空");
         }
-        if (StringUtils.isBlank(contents.getContent())) {
+        if (StringUtils.isEmpty(contents.getContent())) {
             throw new TipException("文章内容不能为空");
         }
         if (contents.getTitle().length() > 200) {
@@ -206,7 +209,7 @@ public class ContentServiceImpl implements IContentService {
         if (null == contents.getAuthorId()) {
             throw new TipException("请登录后发布文章");
         }
-        if (StringUtils.isBlank(contents.getSlug())) {
+        if (StringUtils.isEmpty(contents.getSlug())) {
             contents.setSlug(null);
         }
         int time = DateKit.getCurrentUnixTime();

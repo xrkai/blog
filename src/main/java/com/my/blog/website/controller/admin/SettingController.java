@@ -1,7 +1,7 @@
 package com.my.blog.website.controller.admin;
 
-import com.my.blog.website.service.ILogService;
-import com.my.blog.website.service.ISiteService;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.controller.BaseController;
 import com.my.blog.website.dto.LogActions;
@@ -9,9 +9,9 @@ import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.BackResponseBo;
 import com.my.blog.website.modal.Bo.RestResponseBo;
 import com.my.blog.website.modal.Vo.OptionVo;
+import com.my.blog.website.service.ILogService;
 import com.my.blog.website.service.IOptionService;
-import com.my.blog.website.utils.GsonUtils;
-import org.apache.commons.lang3.StringUtils;
+import com.my.blog.website.service.ISiteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -73,10 +73,10 @@ public class SettingController extends BaseController {
 
             WebConst.initConfig = querys;
 
-            if (StringUtils.isNotBlank(site_theme)) {
+            if (StringUtils.isNotEmpty(site_theme)) {
                 BaseController.THEME = "themes/" + site_theme;
             }
-            logService.insertLog(LogActions.SYS_SETTING.getAction(), GsonUtils.toJsonString(querys), request.getRemoteAddr(), this.getUid(request));
+            logService.insertLog(LogActions.SYS_SETTING.getAction(), JSONObject.toJSONString(querys), request.getRemoteAddr(), this.getUid(request));
             return RestResponseBo.ok();
         } catch (Exception e) {
             String msg = "保存设置失败";
@@ -100,7 +100,7 @@ public class SettingController extends BaseController {
     @Transactional(rollbackFor = TipException.class)
     public RestResponseBo backup(@RequestParam String bk_type, @RequestParam String bk_path,
                                  HttpServletRequest request) {
-        if (StringUtils.isBlank(bk_type)) {
+        if (StringUtils.isEmpty(bk_type)) {
             return RestResponseBo.fail("请确认信息输入完整");
         }
         try {

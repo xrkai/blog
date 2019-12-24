@@ -1,18 +1,17 @@
 package com.my.blog.website.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import com.my.blog.website.exception.TipException;
-import com.my.blog.website.utils.DateKit;
-import com.my.blog.website.utils.TaleUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.my.blog.website.dao.CommentVoMapper;
+import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.CommentBo;
 import com.my.blog.website.modal.Vo.CommentVo;
 import com.my.blog.website.modal.Vo.CommentVoExample;
 import com.my.blog.website.modal.Vo.ContentVo;
 import com.my.blog.website.service.ICommentService;
 import com.my.blog.website.service.IContentService;
-import org.apache.commons.lang3.StringUtils;
+import com.my.blog.website.utils.DateKit;
+import com.my.blog.website.utils.TaleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -39,13 +38,13 @@ public class CommentServiceImpl implements ICommentService {
         if (null == comments) {
             throw new TipException("评论对象为空");
         }
-        if (StringUtils.isBlank(comments.getAuthor())) {
+        if (StringUtils.isEmpty(comments.getAuthor())) {
             comments.setAuthor("热心网友");
         }
-        if (StringUtils.isNotBlank(comments.getMail()) && !TaleUtils.isEmail(comments.getMail())) {
+        if (StringUtils.isNotEmpty(comments.getMail()) && !TaleUtils.isEmail(comments.getMail())) {
             throw new TipException("请输入正确的邮箱格式");
         }
-        if (StringUtils.isBlank(comments.getContent())) {
+        if (StringUtils.isEmpty(comments.getContent())) {
             throw new TipException("评论内容不能为空");
         }
         if (comments.getContent().length() < 5 || comments.getContent().length() > 2000) {
@@ -69,23 +68,23 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public PageInfo<CommentBo> getComments(Integer cid, int page, int limit) {
+    public Page<CommentBo> getComments(Integer cid, int page, int limit) {
 
         if (null != cid) {
-            PageHelper.startPage(page, limit);
             CommentVoExample commentVoExample = new CommentVoExample();
             commentVoExample.createCriteria().andCidEqualTo(cid).andParentEqualTo(0);
             commentVoExample.setOrderByClause("coid desc");
             List<CommentVo> parents = commentDao.selectByExampleWithBLOBs(commentVoExample);
-            PageInfo<CommentVo> commentPaginator = new PageInfo<>(parents);
-            PageInfo<CommentBo> returnBo = copyPageInfo(commentPaginator);
+            Page<CommentVo> commentPaginator = new Page<>();
+            commentPaginator.setRecords(parents);
+            Page<CommentBo> returnBo = copyPage(commentPaginator);
             if (parents.size() != 0) {
                 List<CommentBo> comments = new ArrayList<>(parents.size());
                 parents.forEach(parent -> {
                     CommentBo comment = new CommentBo(parent);
                     comments.add(comment);
                 });
-                returnBo.setList(comments);
+                returnBo.setRecords(comments);
             }
             return returnBo;
         }
@@ -93,11 +92,10 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public PageInfo<CommentVo> getCommentsWithPage(CommentVoExample commentVoExample, int page, int limit) {
-        PageHelper.startPage(page, limit);
+    public Page<CommentVo> getCommentsWithPage(CommentVoExample commentVoExample, int page, int limit) {
         List<CommentVo> commentVos = commentDao.selectByExampleWithBLOBs(commentVoExample);
-        PageInfo<CommentVo> pageInfo = new PageInfo<>(commentVos);
-        return pageInfo;
+        Page<CommentVo> Page = new Page<>();
+        return Page.setRecords(commentVos);
     }
 
     @Override
@@ -137,22 +135,22 @@ public class CommentServiceImpl implements ICommentService {
      * @param <T>
      * @return
      */
-    private <T> PageInfo<T> copyPageInfo(PageInfo ordinal) {
-        PageInfo<T> returnBo = new PageInfo<T>();
-        returnBo.setPageSize(ordinal.getPageSize());
-        returnBo.setPageNum(ordinal.getPageNum());
-        returnBo.setEndRow(ordinal.getEndRow());
-        returnBo.setTotal(ordinal.getTotal());
-        returnBo.setHasNextPage(ordinal.isHasNextPage());
-        returnBo.setHasPreviousPage(ordinal.isHasPreviousPage());
-        returnBo.setIsFirstPage(ordinal.isIsFirstPage());
-        returnBo.setIsLastPage(ordinal.isIsLastPage());
-        returnBo.setNavigateFirstPage(ordinal.getNavigateFirstPage());
-        returnBo.setNavigateLastPage(ordinal.getNavigateLastPage());
-        returnBo.setNavigatepageNums(ordinal.getNavigatepageNums());
-        returnBo.setSize(ordinal.getSize());
-        returnBo.setPrePage(ordinal.getPrePage());
-        returnBo.setNextPage(ordinal.getNextPage());
-        return returnBo;
+    private <T> Page<T> copyPage(Page ordinal) {
+        Page<T> returnBo = new Page<T>();
+//        returnBo.setPageSize(ordinal.getPageSize());
+//        returnBo.setPageNum(ordinal.getPageNum());
+//        returnBo.setEndRow(ordinal.getEndRow());
+//        returnBo.setTotal(ordinal.getTotal());
+//        returnBo.setHasNextPage(ordinal.isHasNextPage());
+//        returnBo.setHasPreviousPage(ordinal.isHasPreviousPage());
+//        returnBo.setIsFirstPage(ordinal.isIsFirstPage());
+//        returnBo.setIsLastPage(ordinal.isIsLastPage());
+//        returnBo.setNavigateFirstPage(ordinal.getNavigateFirstPage());
+//        returnBo.setNavigateLastPage(ordinal.getNavigateLastPage());
+//        returnBo.setNavigatepageNums(ordinal.getNavigatepageNums());
+//        returnBo.setSize(ordinal.getSize());
+//        returnBo.setPrePage(ordinal.getPrePage());
+//        returnBo.setNextPage(ordinal.getNextPage());
+        return ordinal;
     }
 }

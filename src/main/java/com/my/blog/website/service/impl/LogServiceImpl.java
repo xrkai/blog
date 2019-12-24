@@ -1,12 +1,11 @@
 package com.my.blog.website.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.my.blog.website.dao.LogVoMapper;
-import com.my.blog.website.service.ILogService;
-import com.my.blog.website.utils.DateKit;
 import com.my.blog.website.constant.WebConst;
+import com.my.blog.website.dao.LogVoMapper;
 import com.my.blog.website.modal.Vo.LogVo;
 import com.my.blog.website.modal.Vo.LogVoExample;
+import com.my.blog.website.service.ILogService;
+import com.my.blog.website.utils.DateKit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -43,7 +42,7 @@ public class LogServiceImpl implements ILogService {
 
     @Override
     public List<LogVo> getLogs(int page, int limit) {
-        LOGGER.debug("Enter getLogs method:page={},linit={}",page,limit);
+        LOGGER.debug("Enter getLogs method:page={},linit={}", page, limit);
         if (page <= 0) {
             page = 1;
         }
@@ -52,7 +51,6 @@ public class LogServiceImpl implements ILogService {
         }
         LogVoExample logVoExample = new LogVoExample();
         logVoExample.setOrderByClause("id desc");
-        PageHelper.startPage((page - 1) * limit, limit);
         List<LogVo> logVos = logDao.selectByExample(logVoExample);
         LOGGER.debug("Exit getLogs method");
         return logVos;

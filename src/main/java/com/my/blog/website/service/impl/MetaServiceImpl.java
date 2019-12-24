@@ -1,18 +1,18 @@
 package com.my.blog.website.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.my.blog.website.constant.WebConst;
+import com.my.blog.website.dao.MetaVoMapper;
 import com.my.blog.website.dto.MetaDto;
 import com.my.blog.website.dto.Types;
 import com.my.blog.website.exception.TipException;
+import com.my.blog.website.modal.Vo.ContentVo;
 import com.my.blog.website.modal.Vo.MetaVo;
+import com.my.blog.website.modal.Vo.MetaVoExample;
 import com.my.blog.website.modal.Vo.RelationshipVoKey;
+import com.my.blog.website.service.IContentService;
 import com.my.blog.website.service.IMetaService;
 import com.my.blog.website.service.IRelationshipService;
-import com.my.blog.website.dao.MetaVoMapper;
-import com.my.blog.website.modal.Vo.ContentVo;
-import com.my.blog.website.modal.Vo.MetaVoExample;
-import com.my.blog.website.service.IContentService;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class MetaServiceImpl implements IMetaService {
 
     @Override
     public MetaDto getMeta(String type, String name) {
-        if (StringUtils.isNotBlank(type) && StringUtils.isNotBlank(name)) {
+        if (StringUtils.isNotEmpty(type) && StringUtils.isNotEmpty(name)) {
             return metaDao.selectDtoByNameAndType(name, type);
         }
         return null;
@@ -53,7 +53,7 @@ public class MetaServiceImpl implements IMetaService {
 
     @Override
     public List<MetaVo> getMetas(String types) {
-        if (StringUtils.isNotBlank(types)) {
+        if (StringUtils.isNotEmpty(types)) {
             MetaVoExample metaVoExample = new MetaVoExample();
             metaVoExample.setOrderByClause("sort desc, mid desc");
             metaVoExample.createCriteria().andTypeEqualTo(types);
@@ -64,8 +64,8 @@ public class MetaServiceImpl implements IMetaService {
 
     @Override
     public List<MetaDto> getMetaList(String type, String orderby, int limit) {
-        if (StringUtils.isNotBlank(type)) {
-            if (StringUtils.isBlank(orderby)) {
+        if (StringUtils.isNotEmpty(type)) {
+            if (StringUtils.isEmpty(orderby)) {
                 orderby = "count desc, a.mid desc";
             }
             if (limit < 1 || limit > WebConst.MAX_POSTS) {
@@ -112,7 +112,7 @@ public class MetaServiceImpl implements IMetaService {
 
     @Override
     public void saveMeta(String type, String name, Integer mid) {
-        if (StringUtils.isNotBlank(type) && StringUtils.isNotBlank(name)) {
+        if (StringUtils.isNotEmpty(type) && StringUtils.isNotEmpty(name)) {
             MetaVoExample metaVoExample = new MetaVoExample();
             metaVoExample.createCriteria().andTypeEqualTo(type).andNameEqualTo(name);
             List<MetaVo> metaVos = metaDao.selectByExample(metaVoExample);
@@ -127,7 +127,7 @@ public class MetaServiceImpl implements IMetaService {
                     metas.setMid(mid);
                     metaDao.updateByPrimaryKeySelective(metas);
 //                    更新原有文章的categories
-                    contentService.updateCategory(original.getName(),name);
+                    contentService.updateCategory(original.getName(), name);
                 } else {
                     metas.setType(type);
                     metaDao.insertSelective(metas);
@@ -141,7 +141,7 @@ public class MetaServiceImpl implements IMetaService {
         if (null == cid) {
             throw new TipException("项目关联id不能为空");
         }
-        if (StringUtils.isNotBlank(names) && StringUtils.isNotBlank(type)) {
+        if (StringUtils.isNotEmpty(names) && StringUtils.isNotEmpty(type)) {
             String[] nameArr = StringUtils.split(names, ",");
             for (String name : nameArr) {
                 this.saveOrUpdate(cid, name, type);

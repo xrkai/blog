@@ -1,6 +1,6 @@
 package com.my.blog.website.service;
 
-import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.my.blog.website.modal.Vo.AttachVo;
 
 /**
@@ -9,11 +9,12 @@ import com.my.blog.website.modal.Vo.AttachVo;
 public interface IAttachService {
     /**
      * 分页查询附件
+     *
      * @param page
      * @param limit
      * @return
      */
-    PageInfo<AttachVo> getAttachs(Integer page,Integer limit);
+    Page<AttachVo> getAttachs(Integer page, Integer limit);
 
     /**
      * 保存附件
@@ -27,6 +28,7 @@ public interface IAttachService {
 
     /**
      * 根据附件id查询附件
+     *
      * @param id
      * @return
      */
@@ -34,6 +36,7 @@ public interface IAttachService {
 
     /**
      * 删除附件
+     *
      * @param id
      */
     void deleteById(Integer id);

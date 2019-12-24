@@ -1,6 +1,7 @@
 package com.my.blog.website.controller.admin;
 
-import com.my.blog.website.service.ISiteService;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.controller.BaseController;
 import com.my.blog.website.dto.LogActions;
@@ -12,10 +13,9 @@ import com.my.blog.website.modal.Vo.ContentVo;
 import com.my.blog.website.modal.Vo.LogVo;
 import com.my.blog.website.modal.Vo.UserVo;
 import com.my.blog.website.service.ILogService;
+import com.my.blog.website.service.ISiteService;
 import com.my.blog.website.service.IUserService;
-import com.my.blog.website.utils.GsonUtils;
 import com.my.blog.website.utils.TaleUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -48,10 +48,11 @@ public class IndexController extends BaseController {
 
     /**
      * 页面跳转
+     *
      * @return
      */
-    @GetMapping(value = {"","/index"})
-    public String index(HttpServletRequest request){
+    @GetMapping(value = {"", "/index"})
+    public String index(HttpServletRequest request) {
         LOGGER.info("Enter admin index method");
         List<CommentVo> comments = siteService.recentComments(5);
         List<ContentVo> contents = siteService.recentContents(5);
@@ -77,6 +78,7 @@ public class IndexController extends BaseController {
 
     /**
      * admin 退出登录
+     *
      * @return
      */
     @GetMapping(value = "logout")
@@ -95,13 +97,13 @@ public class IndexController extends BaseController {
     public RestResponseBo saveProfile(@RequestParam String screenName, @RequestParam String email, HttpServletRequest request, HttpSession session) {
 
         UserVo users = this.user(request);
-        if (StringUtils.isNotBlank(screenName) && StringUtils.isNotBlank(email)) {
+        if (StringUtils.isNotEmpty(screenName) && StringUtils.isNotEmpty(email)) {
             UserVo temp = new UserVo();
             temp.setUid(users.getUid());
             temp.setScreenName(screenName);
             temp.setEmail(email);
             userService.updateByUid(temp);
-            logService.insertLog(LogActions.UP_INFO.getAction(), GsonUtils.toJsonString(temp), request.getRemoteAddr(), this.getUid(request));
+            logService.insertLog(LogActions.UP_INFO.getAction(), JSONObject.toJSONString(temp), request.getRemoteAddr(), this.getUid(request));
 
             //更新session中的数据
             UserVo original = (UserVo) session.getAttribute(WebConst.LOGIN_SESSION_KEY);
@@ -118,9 +120,9 @@ public class IndexController extends BaseController {
     @PostMapping(value = "/password")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo upPwd(@RequestParam String oldPassword, @RequestParam String password, HttpServletRequest request,HttpSession session) {
+    public RestResponseBo upPwd(@RequestParam String oldPassword, @RequestParam String password, HttpServletRequest request, HttpSession session) {
         UserVo users = this.user(request);
-        if (StringUtils.isBlank(oldPassword) || StringUtils.isBlank(password)) {
+        if (StringUtils.isEmpty(oldPassword) || StringUtils.isEmpty(password)) {
             return RestResponseBo.fail("请确认信息输入完整");
         }
 
@@ -140,11 +142,11 @@ public class IndexController extends BaseController {
             logService.insertLog(LogActions.UP_PWD.getAction(), null, request.getRemoteAddr(), this.getUid(request));
 
             //更新session中的数据
-            UserVo original= (UserVo)session.getAttribute(WebConst.LOGIN_SESSION_KEY);
+            UserVo original = (UserVo) session.getAttribute(WebConst.LOGIN_SESSION_KEY);
             original.setPassword(pwd);
-            session.setAttribute(WebConst.LOGIN_SESSION_KEY,original);
+            session.setAttribute(WebConst.LOGIN_SESSION_KEY, original);
             return RestResponseBo.ok();
-        } catch (Exception e){
+        } catch (Exception e) {
             String msg = "密码修改失败";
             if (e instanceof TipException) {
                 msg = e.getMessage();

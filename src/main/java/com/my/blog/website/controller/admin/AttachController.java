@@ -1,6 +1,6 @@
 package com.my.blog.website.controller.admin;
 
-import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.controller.BaseController;
 import com.my.blog.website.dto.LogActions;
@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  * 附件管理
- *
+ * <p>
  * Created by 13 on 2017/2/21.
  */
 @Controller
@@ -59,7 +59,7 @@ public class AttachController extends BaseController {
     @GetMapping(value = "")
     public String index(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int page,
                         @RequestParam(value = "limit", defaultValue = "12") int limit) {
-        PageInfo<AttachVo> attachPaginator = attachService.getAttachs(page, limit);
+        Page<AttachVo> attachPaginator = attachService.getAttachs(page, limit);
         request.setAttribute("attachs", attachPaginator);
         request.setAttribute(Types.ATTACH_URL.getType(), Commons.site_option(Types.ATTACH_URL.getType(), Commons.site_url()));
         request.setAttribute("max_file_size", WebConst.MAX_FILE_SIZE / 1024);
@@ -85,9 +85,9 @@ public class AttachController extends BaseController {
                 if (multipartFile.getSize() <= WebConst.MAX_FILE_SIZE) {
                     String fkey = TaleUtils.getFileKey(fname);
                     String ftype = TaleUtils.isImage(multipartFile.getInputStream()) ? Types.IMAGE.getType() : Types.FILE.getType();
-                    File file = new File(CLASSPATH+fkey);
+                    File file = new File(CLASSPATH + fkey);
                     try {
-                        FileCopyUtils.copy(multipartFile.getInputStream(),new FileOutputStream(file));
+                        FileCopyUtils.copy(multipartFile.getInputStream(), new FileOutputStream(file));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -104,6 +104,7 @@ public class AttachController extends BaseController {
 
     /**
      * 删除附件
+     *
      * @param id
      * @param request
      * @return
@@ -116,7 +117,7 @@ public class AttachController extends BaseController {
             AttachVo attach = attachService.selectById(id);
             if (null == attach) return RestResponseBo.fail("不存在该附件");
             attachService.deleteById(id);
-            new File(CLASSPATH+attach.getFkey()).delete();
+            new File(CLASSPATH + attach.getFkey()).delete();
             logService.insertLog(LogActions.DEL_ARTICLE.getAction(), attach.getFkey(), request.getRemoteAddr(), this.getUid(request));
         } catch (Exception e) {
             String msg = "附件删除失败";

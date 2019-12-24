@@ -1,10 +1,10 @@
 package com.my.blog.website.utils;
 
-import com.my.blog.website.exception.TipException;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.controller.admin.AttachController;
+import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Vo.UserVo;
-import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -35,8 +35,6 @@ import java.util.regex.Pattern;
  */
 public class TaleUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaleUtils.class);
-
-    private static DataSource newDataSource;
     /**
      * 一个月
      */
@@ -47,6 +45,7 @@ public class TaleUtils {
     private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
     private static final Pattern SLUG_REGEX = Pattern.compile("^[A-Za-z0-9_-]{5,100}$", Pattern.CASE_INSENSITIVE);
+    private static DataSource newDataSource;
     /**
      * markdown解析器
      */
@@ -156,7 +155,7 @@ public class TaleUtils {
      * @return 加密字符串
      */
     public static String MD5encode(String source) {
-        if (StringUtils.isBlank(source)) {
+        if (StringUtils.isEmpty(source)) {
             return null;
         }
         MessageDigest messageDigest = null;
@@ -227,7 +226,7 @@ public class TaleUtils {
             if (cookie != null && cookie.getValue() != null) {
                 try {
                     String uid = Tools.deAes(cookie.getValue(), WebConst.AES_SALT);
-                    return StringUtils.isNotBlank(uid) && Tools.isNumber(uid) ? Integer.valueOf(uid) : null;
+                    return StringUtils.isNotEmpty(uid) && Tools.isNumber(uid) ? Integer.valueOf(uid) : null;
                 } catch (Exception e) {
                 }
             }
@@ -267,7 +266,7 @@ public class TaleUtils {
             boolean isSSL = false;
             Cookie cookie = new Cookie(WebConst.USER_IN_COOKIE, val);
             cookie.setPath("/");
-            cookie.setMaxAge(60*30);
+            cookie.setMaxAge(60 * 30);
             cookie.setSecure(isSSL);
             response.addCookie(cookie);
         } catch (Exception e) {
@@ -282,7 +281,7 @@ public class TaleUtils {
      * @return
      */
     public static String htmlToText(String html) {
-        if (StringUtils.isNotBlank(html)) {
+        if (StringUtils.isNotEmpty(html)) {
             return html.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
         }
         return "";
@@ -295,7 +294,7 @@ public class TaleUtils {
      * @return
      */
     public static String mdToHtml(String markdown) {
-        if (StringUtils.isBlank(markdown)) {
+        if (StringUtils.isEmpty(markdown)) {
             return "";
         }
         Node document = parser.parse(markdown);
@@ -411,7 +410,7 @@ public class TaleUtils {
      * @return
      */
     public static boolean isPath(String slug) {
-        if (StringUtils.isNotBlank(slug)) {
+        if (StringUtils.isNotEmpty(slug)) {
             if (slug.contains("/") || slug.contains(" ") || slug.contains(".")) {
                 return false;
             }
@@ -426,8 +425,6 @@ public class TaleUtils {
         if (!new File(AttachController.CLASSPATH + prefix).exists()) {
             new File(AttachController.CLASSPATH + prefix).mkdirs();
         }
-
-        name = StringUtils.trimToNull(name);
         if (name == null) {
             return prefix + "/" + UUID.UU32() + "." + null;
         } else {
@@ -436,7 +433,7 @@ public class TaleUtils {
             int index = name.lastIndexOf(".");
             String ext = null;
             if (index >= 0) {
-                ext = StringUtils.trimToNull(name.substring(index + 1));
+                ext = name.substring(index + 1);
             }
             return prefix + "/" + UUID.UU32() + "." + (ext == null ? null : (ext));
         }
