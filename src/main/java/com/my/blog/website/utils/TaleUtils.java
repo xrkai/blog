@@ -2,14 +2,13 @@ package com.my.blog.website.utils;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.controller.admin.AttachController;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Vo.UserVo;
+import com.my.blog.website.module.admin.controller.AttachController;
+import lombok.extern.slf4j.Slf4j;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.imageio.ImageIO;
@@ -33,8 +32,8 @@ import java.util.regex.Pattern;
  * <p>
  * Created by 13 on 2017/2/21.
  */
+@Slf4j
 public class TaleUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TaleUtils.class);
     /**
      * 一个月
      */
@@ -84,7 +83,7 @@ public class TaleUtils {
      * @param password 密码
      */
     public static void updateJDBCFile(String url, String dbName, String userName, String password) {
-        LOGGER.info("Enter updateJDBCFile method");
+        log.info("Enter updateJDBCFile method");
         Properties props = new Properties();
         FileOutputStream fos = null;
 
@@ -97,7 +96,7 @@ public class TaleUtils {
             props.setProperty("spring.datasource.driver-class-name", "com.mysql.jdbc.Driver");
             props.store(fos, "update jdbc info.");
         } catch (IOException e) {
-            LOGGER.error("updateJDBCFile method fail:{}", e.getMessage());
+            log.error("updateJDBCFile method fail:{}", e.getMessage());
             e.printStackTrace();
         } finally {
             if (fos != null) {
@@ -108,7 +107,7 @@ public class TaleUtils {
                 }
             }
         }
-        LOGGER.info("Exit updateJDBCFile method");
+        log.info("Exit updateJDBCFile method");
     }
 
     /**
@@ -127,7 +126,7 @@ public class TaleUtils {
             }
             properties.load(resourceAsStream);
         } catch (TipException | IOException e) {
-            LOGGER.error("get properties file fail={}", e.getMessage());
+            log.error("get properties file fail={}", e.getMessage());
         }
         return properties;
     }
@@ -143,7 +142,7 @@ public class TaleUtils {
             InputStream resourceAsStream = new FileInputStream(fileName);
             properties.load(resourceAsStream);
         } catch (TipException | IOException e) {
-            LOGGER.error("get properties file fail={}", e.getMessage());
+            log.error("get properties file fail={}", e.getMessage());
         }
         return properties;
     }
@@ -327,7 +326,7 @@ public class TaleUtils {
         try {
             response.sendRedirect(Commons.site_url());
         } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 

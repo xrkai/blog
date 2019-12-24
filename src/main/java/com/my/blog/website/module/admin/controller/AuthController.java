@@ -1,18 +1,17 @@
-package com.my.blog.website.controller.admin;
+package com.my.blog.website.module.admin.controller;
 
 import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.controller.BaseController;
 import com.my.blog.website.dto.LogActions;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.RestResponseBo;
 import com.my.blog.website.modal.Vo.UserVo;
+import com.my.blog.website.module.blog.controller.BaseController;
 import com.my.blog.website.service.ILogService;
 import com.my.blog.website.service.IUserService;
 import com.my.blog.website.utils.Commons;
 import com.my.blog.website.utils.TaleUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -31,9 +30,8 @@ import java.io.IOException;
 @Controller
 @RequestMapping("/admin")
 @Transactional(rollbackFor = TipException.class)
+@Slf4j
 public class AuthController extends BaseController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
     @Resource
     private IUserService usersService;
@@ -82,7 +80,7 @@ public class AuthController extends BaseController {
             if (e instanceof TipException) {
                 msg = e.getMessage();
             } else {
-                LOGGER.error(msg, e);
+                log.error(msg, e);
             }
             return RestResponseBo.fail(msg);
         }
@@ -106,7 +104,7 @@ public class AuthController extends BaseController {
             response.sendRedirect(Commons.site_login());
         } catch (IOException e) {
             e.printStackTrace();
-            LOGGER.error("注销失败", e);
+            log.error("注销失败", e);
         }
     }
 }

@@ -1,13 +1,12 @@
 package com.my.blog.website.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.my.blog.website.dao.AttachVoMapper;
 import com.my.blog.website.modal.Vo.AttachVo;
 import com.my.blog.website.modal.Vo.AttachVoExample;
+import com.my.blog.website.module.admin.mapper.AttachVoMapper;
 import com.my.blog.website.service.IAttachService;
 import com.my.blog.website.utils.DateKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -17,8 +16,8 @@ import java.util.List;
  * Created by wangq on 2017/3/20.
  */
 @Service
+@Slf4j
 public class AttachServiceImpl implements IAttachService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AttachServiceImpl.class);
 
     @Resource
     private AttachVoMapper attachDao;

@@ -1,14 +1,13 @@
-package com.my.blog.website.controller.admin;
+package com.my.blog.website.module.admin.controller;
 
 import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.controller.BaseController;
 import com.my.blog.website.dto.MetaDto;
 import com.my.blog.website.dto.Types;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.RestResponseBo;
+import com.my.blog.website.module.blog.controller.BaseController;
 import com.my.blog.website.service.IMetaService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -22,22 +21,23 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("admin/category")
+@Slf4j
 public class CategoryController extends BaseController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CategoryController.class);
 
     @Resource
     private IMetaService metasService;
 
     /**
      * 分类页
+     *
      * @param request
      * @return
      */
     @GetMapping(value = "")
     public String index(HttpServletRequest request) {
         List<MetaDto> categories = metasService.getMetaList(Types.CATEGORY.getType(), null, WebConst.MAX_POSTS);
-        List<MetaDto> tags = metasService.getMetaList(Types.TAG.getType(),  null, WebConst.MAX_POSTS);
+        List<MetaDto> tags = metasService.getMetaList(Types.TAG.getType(), null, WebConst.MAX_POSTS);
         request.setAttribute("categories", categories);
         request.setAttribute("tags", tags);
         return "admin/category";
@@ -48,13 +48,13 @@ public class CategoryController extends BaseController {
     @Transactional(rollbackFor = TipException.class)
     public RestResponseBo saveCategory(@RequestParam String cname, @RequestParam Integer mid) {
         try {
-            metasService.saveMeta(Types.CATEGORY.getType(),cname,mid);
+            metasService.saveMeta(Types.CATEGORY.getType(), cname, mid);
         } catch (Exception e) {
             String msg = "分类保存失败";
             if (e instanceof TipException) {
                 msg = e.getMessage();
             } else {
-                LOGGER.error(msg, e);
+                log.error(msg, e);
             }
             return RestResponseBo.fail(msg);
         }
@@ -63,6 +63,7 @@ public class CategoryController extends BaseController {
 
     /**
      * 删除分类
+     *
      * @param mid
      * @return
      */
@@ -77,7 +78,7 @@ public class CategoryController extends BaseController {
             if (e instanceof TipException) {
                 msg = e.getMessage();
             } else {
-                LOGGER.error(msg, e);
+                log.error(msg, e);
             }
             return RestResponseBo.fail(msg);
         }

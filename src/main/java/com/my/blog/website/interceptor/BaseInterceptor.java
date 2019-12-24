@@ -1,12 +1,11 @@
 package com.my.blog.website.interceptor;
 
+import com.my.blog.website.constant.WebConst;
+import com.my.blog.website.dto.Types;
 import com.my.blog.website.modal.Vo.UserVo;
 import com.my.blog.website.service.IUserService;
 import com.my.blog.website.utils.*;
-import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.dto.Types;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -20,8 +19,8 @@ import javax.servlet.http.HttpServletResponse;
  * Created by BlueT on 2017/3/9.
  */
 @Component
+@Slf4j
 public class BaseInterceptor implements HandlerInterceptor {
-    private static final Logger LOGGE = LoggerFactory.getLogger(BaseInterceptor.class);
     private static final String USER_AGENT = "user-agent";
 
     @Resource
@@ -40,9 +39,8 @@ public class BaseInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
         String uri = request.getRequestURI();
 
-        LOGGE.info("UserAgent: {}", request.getHeader(USER_AGENT));
-        LOGGE.info("用户访问地址: {}, 来路地址: {}", uri, IPKit.getIpAddrByRequest(request));
-
+        log.info("UserAgent: {}", request.getHeader(USER_AGENT));
+        log.info("用户访问地址: {}, 来路地址: {}", uri, IPKit.getIpAddrByRequest(request));
 
         //请求拦截处理
         UserVo user = TaleUtils.getLoginUser(request);
@@ -69,13 +67,14 @@ public class BaseInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) throws Exception {
-        httpServletRequest.setAttribute("commons", commons);//一些工具类和公共方法
+    public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) {
+        //一些工具类和公共方法
+        httpServletRequest.setAttribute("commons", commons);
         httpServletRequest.setAttribute("adminCommons", adminCommons);
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
+    public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) {
 
     }
 }

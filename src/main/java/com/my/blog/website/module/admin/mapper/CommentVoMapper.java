@@ -1,11 +1,11 @@
-package com.my.blog.website.dao;
+package com.my.blog.website.module.admin.mapper;
 
 import com.my.blog.website.modal.Vo.CommentVo;
 import com.my.blog.website.modal.Vo.CommentVoExample;
-
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public interface CommentVoMapper {
@@ -26,8 +26,6 @@ public interface CommentVoMapper {
     CommentVo selectByPrimaryKey(Integer coid);
 
     int updateByExampleSelective(@Param("record") CommentVo record, @Param("example") CommentVoExample example);
-
-    int updateByExampleWithBLOBs(@Param("record") CommentVo record, @Param("example") CommentVoExample example);
 
     int updateByExample(@Param("record") CommentVo record, @Param("example") CommentVoExample example);
 

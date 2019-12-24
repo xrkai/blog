@@ -1,9 +1,8 @@
-package com.my.blog.website.controller.admin;
+package com.my.blog.website.module.admin.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.controller.BaseController;
 import com.my.blog.website.dto.LogActions;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.RestResponseBo;
@@ -12,12 +11,12 @@ import com.my.blog.website.modal.Vo.CommentVo;
 import com.my.blog.website.modal.Vo.ContentVo;
 import com.my.blog.website.modal.Vo.LogVo;
 import com.my.blog.website.modal.Vo.UserVo;
+import com.my.blog.website.module.blog.controller.BaseController;
 import com.my.blog.website.service.ILogService;
 import com.my.blog.website.service.ISiteService;
 import com.my.blog.website.service.IUserService;
 import com.my.blog.website.utils.TaleUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +33,8 @@ import java.util.List;
 @Controller("adminIndexController")
 @RequestMapping("/admin")
 @Transactional(rollbackFor = TipException.class)
+@Slf4j
 public class IndexController extends BaseController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(IndexController.class);
 
     @Resource
     private ISiteService siteService;
@@ -53,7 +52,7 @@ public class IndexController extends BaseController {
      */
     @GetMapping(value = {"", "/index"})
     public String index(HttpServletRequest request) {
-        LOGGER.info("Enter admin index method");
+        log.info("Enter admin index method");
         List<CommentVo> comments = siteService.recentComments(5);
         List<ContentVo> contents = siteService.recentContents(5);
         StatisticsBo statistics = siteService.getStatistics();
@@ -64,7 +63,7 @@ public class IndexController extends BaseController {
         request.setAttribute("articles", contents);
         request.setAttribute("statistics", statistics);
         request.setAttribute("logs", logs);
-        LOGGER.info("Exit admin index method");
+        log.info("Exit admin index method");
         return "admin/index";
     }
 
@@ -151,7 +150,7 @@ public class IndexController extends BaseController {
             if (e instanceof TipException) {
                 msg = e.getMessage();
             } else {
-                LOGGER.error(msg, e);
+                log.error(msg, e);
             }
             return RestResponseBo.fail(msg);
         }

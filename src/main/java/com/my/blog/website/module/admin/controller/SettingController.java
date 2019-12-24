@@ -1,19 +1,18 @@
-package com.my.blog.website.controller.admin;
+package com.my.blog.website.module.admin.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.controller.BaseController;
 import com.my.blog.website.dto.LogActions;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.BackResponseBo;
 import com.my.blog.website.modal.Bo.RestResponseBo;
 import com.my.blog.website.modal.Vo.OptionVo;
+import com.my.blog.website.module.blog.controller.BaseController;
 import com.my.blog.website.service.ILogService;
 import com.my.blog.website.service.IOptionService;
 import com.my.blog.website.service.ISiteService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +28,8 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/admin/setting")
+@Slf4j
 public class SettingController extends BaseController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SettingController.class);
 
     @Resource
     private IOptionService optionService;
@@ -83,7 +82,7 @@ public class SettingController extends BaseController {
             if (e instanceof TipException) {
                 msg = e.getMessage();
             } else {
-                LOGGER.error(msg, e);
+                log.error(msg, e);
             }
             return RestResponseBo.fail(msg);
         }
@@ -112,7 +111,7 @@ public class SettingController extends BaseController {
             if (e instanceof TipException) {
                 msg = e.getMessage();
             } else {
-                LOGGER.error(msg, e);
+                log.error(msg, e);
             }
             return RestResponseBo.fail(msg);
         }

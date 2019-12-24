@@ -1,13 +1,15 @@
-package com.my.blog.website.dao;
+package com.my.blog.website.module.admin.mapper;
 
 import com.my.blog.website.modal.Vo.AttachVo;
 import com.my.blog.website.modal.Vo.AttachVoExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public interface AttachVoMapper {
+
     long countByExample(AttachVoExample example);
 
     int deleteByExample(AttachVoExample example);
@@ -29,4 +31,5 @@ public interface AttachVoMapper {
     int updateByPrimaryKeySelective(AttachVo record);
 
     int updateByPrimaryKey(AttachVo record);
+
 }

@@ -3,12 +3,12 @@ package com.my.blog.website.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.dao.ContentVoMapper;
-import com.my.blog.website.dao.MetaVoMapper;
 import com.my.blog.website.dto.Types;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Vo.ContentVo;
 import com.my.blog.website.modal.Vo.ContentVoExample;
+import com.my.blog.website.module.admin.mapper.ContentVoMapper;
+import com.my.blog.website.module.admin.mapper.MetaVoMapper;
 import com.my.blog.website.service.IContentService;
 import com.my.blog.website.service.IMetaService;
 import com.my.blog.website.service.IRelationshipService;
@@ -16,8 +16,7 @@ import com.my.blog.website.utils.DateKit;
 import com.my.blog.website.utils.TaleUtils;
 import com.my.blog.website.utils.Tools;
 import com.vdurmont.emoji.EmojiParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,8 +26,8 @@ import java.util.List;
  * Created by Administrator on 2017/3/13 013.
  */
 @Service
+@Slf4j
 public class ContentServiceImpl implements IContentService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContentServiceImpl.class);
 
     @Resource
     private ContentVoMapper contentDao;
@@ -100,14 +99,14 @@ public class ContentServiceImpl implements IContentService {
 
     @Override
     public Page<ContentVo> getContents(Integer p, Integer limit) {
-        LOGGER.debug("Enter getContents method");
+        log.debug("Enter getContents method");
         ContentVoExample example = new ContentVoExample();
         example.setOrderByClause("created desc");
         example.createCriteria().andTypeEqualTo(Types.ARTICLE.getType()).andStatusEqualTo(Types.PUBLISH.getType());
         Page<ContentVo> page = new Page<>();
         List<ContentVo> data = contentDao.selectByExampleWithBLOBs(example);
         page.setRecords(data);
-        LOGGER.debug("Exit getContents method");
+        log.debug("Exit getContents method");
         return page;
     }
 

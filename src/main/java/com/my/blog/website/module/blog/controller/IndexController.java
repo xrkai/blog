@@ -1,4 +1,4 @@
-package com.my.blog.website.controller;
+package com.my.blog.website.module.blog.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -21,8 +21,7 @@ import com.my.blog.website.utils.IPKit;
 import com.my.blog.website.utils.PatternKit;
 import com.my.blog.website.utils.TaleUtils;
 import com.vdurmont.emoji.EmojiParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -40,8 +39,8 @@ import java.util.List;
  * Created by Administrator on 2017/3/8 008.
  */
 @Controller
+@Slf4j
 public class IndexController extends BaseController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(IndexController.class);
 
     @Resource
     private IContentService contentService;
@@ -229,7 +228,7 @@ public class IndexController extends BaseController {
             if (e instanceof TipException) {
                 msg = e.getMessage();
             } else {
-                LOGGER.error(msg, e);
+                log.error(msg, e);
             }
             return RestResponseBo.fail(msg);
         }

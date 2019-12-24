@@ -1,10 +1,11 @@
-package com.my.blog.website.dao;
+package com.my.blog.website.module.admin.mapper;
 
 import com.my.blog.website.modal.Vo.UserVo;
 import com.my.blog.website.modal.Vo.UserVoExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public interface UserVoMapper {

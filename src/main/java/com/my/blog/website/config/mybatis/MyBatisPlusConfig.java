@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * @version: 1.0
  */
 @Configuration
-@MapperScan("com.my.blog.website.dao")
+@MapperScan("com.my.blog.website.module.**.mapper")
 public class MyBatisPlusConfig {
 
     @Bean

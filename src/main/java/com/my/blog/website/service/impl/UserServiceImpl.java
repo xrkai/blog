@@ -1,14 +1,12 @@
 package com.my.blog.website.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.my.blog.website.dao.UserVoMapper;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Vo.UserVo;
 import com.my.blog.website.modal.Vo.UserVoExample;
+import com.my.blog.website.module.admin.mapper.UserVoMapper;
 import com.my.blog.website.service.IUserService;
 import com.my.blog.website.utils.TaleUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -19,7 +17,7 @@ import java.util.List;
  */
 @Service
 public class UserServiceImpl implements IUserService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+
 
     @Resource
     private UserVoMapper userDao;

@@ -1,8 +1,7 @@
-package com.my.blog.website.controller.admin;
+package com.my.blog.website.module.admin.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.controller.BaseController;
 import com.my.blog.website.dto.LogActions;
 import com.my.blog.website.dto.Types;
 import com.my.blog.website.exception.TipException;
@@ -10,10 +9,10 @@ import com.my.blog.website.modal.Bo.RestResponseBo;
 import com.my.blog.website.modal.Vo.ContentVo;
 import com.my.blog.website.modal.Vo.ContentVoExample;
 import com.my.blog.website.modal.Vo.UserVo;
+import com.my.blog.website.module.blog.controller.BaseController;
 import com.my.blog.website.service.IContentService;
 import com.my.blog.website.service.ILogService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -26,9 +25,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Controller()
 @RequestMapping("admin/page")
+@Slf4j
 public class PageController extends BaseController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PageController.class);
 
     @Resource
     private IContentService contentsService;
@@ -87,7 +86,7 @@ public class PageController extends BaseController {
             if (e instanceof TipException) {
                 msg = e.getMessage();
             } else {
-                LOGGER.error(msg, e);
+                log.error(msg, e);
             }
             return RestResponseBo.fail(msg);
         }
@@ -124,7 +123,7 @@ public class PageController extends BaseController {
             if (e instanceof TipException) {
                 msg = e.getMessage();
             } else {
-                LOGGER.error(msg, e);
+                log.error(msg, e);
             }
             return RestResponseBo.fail(msg);
         }
@@ -143,7 +142,7 @@ public class PageController extends BaseController {
             if (e instanceof TipException) {
                 msg = e.getMessage();
             } else {
-                LOGGER.error(msg, e);
+                log.error(msg, e);
             }
             return RestResponseBo.fail(msg);
         }

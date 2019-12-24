@@ -2,18 +2,17 @@ package com.my.blog.website.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.my.blog.website.dao.CommentVoMapper;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.CommentBo;
 import com.my.blog.website.modal.Vo.CommentVo;
 import com.my.blog.website.modal.Vo.CommentVoExample;
 import com.my.blog.website.modal.Vo.ContentVo;
+import com.my.blog.website.module.admin.mapper.CommentVoMapper;
 import com.my.blog.website.service.ICommentService;
 import com.my.blog.website.service.IContentService;
 import com.my.blog.website.utils.DateKit;
 import com.my.blog.website.utils.TaleUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -24,8 +23,8 @@ import java.util.List;
  * Created by BlueT on 2017/3/16.
  */
 @Service
+@Slf4j
 public class CommentServiceImpl implements ICommentService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommentServiceImpl.class);
 
     @Resource
     private CommentVoMapper commentDao;

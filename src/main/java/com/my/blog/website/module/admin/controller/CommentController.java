@@ -1,17 +1,16 @@
-package com.my.blog.website.controller.admin;
+package com.my.blog.website.module.admin.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.my.blog.website.controller.BaseController;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.modal.Bo.RestResponseBo;
 import com.my.blog.website.modal.Vo.CommentVo;
 import com.my.blog.website.modal.Vo.CommentVoExample;
 import com.my.blog.website.modal.Vo.UserVo;
+import com.my.blog.website.module.blog.controller.BaseController;
 import com.my.blog.website.service.ICommentService;
 import com.my.blog.website.utils.TaleUtils;
 import com.vdurmont.emoji.EmojiParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -25,9 +24,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Controller
 @RequestMapping("admin/comments")
+@Slf4j
 public class CommentController extends BaseController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommentController.class);
 
     @Resource
     private ICommentService commentsService;
@@ -73,7 +72,7 @@ public class CommentController extends BaseController {
             if (e instanceof TipException) {
                 msg = e.getMessage();
             } else {
-                LOGGER.error(msg, e);
+                log.error(msg, e);
             }
             return RestResponseBo.fail(msg);
         }
@@ -94,7 +93,7 @@ public class CommentController extends BaseController {
             if (e instanceof TipException) {
                 msg = e.getMessage();
             } else {
-                LOGGER.error(msg, e);
+                log.error(msg, e);
             }
             return RestResponseBo.fail(msg);
         }
@@ -145,7 +144,7 @@ public class CommentController extends BaseController {
             if (e instanceof TipException) {
                 msg = e.getMessage();
             } else {
-                LOGGER.error(msg, e);
+                log.error(msg, e);
             }
             return RestResponseBo.fail(msg);
         }

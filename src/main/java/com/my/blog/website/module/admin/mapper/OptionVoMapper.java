@@ -1,12 +1,11 @@
-package com.my.blog.website.dao;
+package com.my.blog.website.module.admin.mapper;
 
 import com.my.blog.website.modal.Vo.OptionVo;
 import com.my.blog.website.modal.Vo.OptionVoExample;
-
-import java.util.List;
-
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public interface OptionVoMapper {
@@ -34,6 +33,7 @@ public interface OptionVoMapper {
 
     /**
      * 批量保存
+     *
      * @param optionVos list
      * @return 保存的个数
      */
