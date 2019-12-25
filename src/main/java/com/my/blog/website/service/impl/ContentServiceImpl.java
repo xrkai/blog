@@ -164,7 +164,7 @@ public class ContentServiceImpl implements IContentService {
         QueryWrapper<Content> contentQueryWrapper = new QueryWrapper<>();
         contentQueryWrapper.lambda().eq(Content::getType, type);
         contentQueryWrapper.orderByDesc("created");
-        return contentMapper.selectPage(new Page<Content>(page, limit), contentQueryWrapper);
+        return contentMapper.selectPage(new Page<>(page, limit), contentQueryWrapper);
     }
 
     @Override

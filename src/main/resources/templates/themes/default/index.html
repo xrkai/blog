@@ -8,7 +8,7 @@
             <div class="post-list-item" th:each="article: ${articles.records}">
                 <div class="post-list-item-container">
                     <a class="item-thumb  bg-deepgrey" th:href="${commons.permalink(article)}"
-                       th:style="'background-image:url('+@{${commons.show_thumb(article)}}+');'">
+                       th:style="'background-image:url('+@{${commons.show_thumb(articleStat.index)}}+');'">
                         <dir class="item-desc" th:text="${article.tags}"></dir>
                     </a>
                     <div class="item-slant reverse-slant &lt; bg-deepgrey"></div>
@@ -18,7 +18,7 @@
                                                    th:text="${article.title}"></a>
                         </div>
                         <div class="item-meta clearfix">
-                            <div th:class="'item-meta-ico '+ ${commons.show_icon(article.cid)}"
+                            <div th:class="'item-meta-ico '+ ${commons.show_icon(articleStat.index)}"
                                  th:style="'background: url('+@{/static/user/img/bg-ico.png}+');no-repeat;background-size: 40px auto;' "></div>
                             <div class="item-meta-cat" th:utext="${commons.show_categories(article.categories)}">
                             </div>

@@ -1,5 +1,6 @@
 package com.my.blog.website.interceptor;
 
+import com.my.blog.website.common.page.BasePageUtils;
 import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.dto.Types;
 import com.my.blog.website.module.admin.entity.User;
@@ -33,6 +34,9 @@ public class BaseInterceptor implements HandlerInterceptor {
 
     @Resource
     private AdminCommons adminCommons;
+
+    @Resource
+    private BasePageUtils basePageUtils;
 
 
     @Override
@@ -71,6 +75,7 @@ public class BaseInterceptor implements HandlerInterceptor {
         //一些工具类和公共方法
         httpServletRequest.setAttribute("commons", commons);
         httpServletRequest.setAttribute("adminCommons", adminCommons);
+        httpServletRequest.setAttribute("basePageUtils", basePageUtils);
     }
 
     @Override

@@ -50,7 +50,7 @@ public class ArticleController extends BaseController {
      * @return
      */
     @GetMapping(value = "")
-    public String index(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "limit", defaultValue = "15") int limit, HttpServletRequest request) {
+    public String index(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "limit", defaultValue = "10") int limit, HttpServletRequest request) {
         IPage<Content> contentsPaginator = contentsService.getArticlesWithPage(page, limit, Types.ARTICLE.getType());
         request.setAttribute("articles", contentsPaginator);
         return "admin/article_list";
