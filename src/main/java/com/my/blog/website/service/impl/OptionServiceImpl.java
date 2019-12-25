@@ -24,13 +24,13 @@ public class OptionServiceImpl implements IOptionService {
     @Override
     public void insertOption(String name, String value) {
         log.debug("Enter insertOption method:name={},value={}", name, value);
-        Option optionVo = new Option();
-        optionVo.setName(name);
-        optionVo.setValue(value);
+        Option option = new Option();
+        option.setName(name);
+        option.setValue(value);
         if (optionMapper.selectList(null).size() == 0) {
-            optionMapper.insert(optionVo);
+            optionMapper.insert(option);
         } else {
-            optionMapper.updateById(optionVo);
+            optionMapper.updateById(option);
         }
         log.debug("Exit insertOption method.");
     }
