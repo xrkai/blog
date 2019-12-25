@@ -1,4 +1,4 @@
-package com.my.blog.website.service.impl;
+package com.my.blog.website.module.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -9,8 +9,8 @@ import com.my.blog.website.modal.Bo.CommentBo;
 import com.my.blog.website.module.admin.entity.Comment;
 import com.my.blog.website.module.admin.entity.Content;
 import com.my.blog.website.module.admin.mapper.CommentMapper;
-import com.my.blog.website.service.ICommentService;
-import com.my.blog.website.service.IContentService;
+import com.my.blog.website.module.admin.service.ICommentService;
+import com.my.blog.website.module.admin.service.IContentService;
 import com.my.blog.website.utils.DateKit;
 import com.my.blog.website.utils.TaleUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -53,12 +53,15 @@ public class CommentServiceImpl implements ICommentService {
         if (null == comments.getCid()) {
             throw new TipException("评论文章不能为空");
         }
-        Content contents = contentService.getContents(String.valueOf(comments.getCid()));
+        Content contents = contentService.getContents(comments.getCid());
         if (null == contents) {
             throw new TipException("不存在的文章");
         }
         comments.setOwnerId(contents.getAuthorId());
         comments.setCreated(DateKit.getCurrentUnixTime());
+        if (StringUtils.isEmpty(comments.getParent())) {
+            comments.setParent("0");
+        }
         commentMapper.insert(comments);
 
         Content temp = new Content();

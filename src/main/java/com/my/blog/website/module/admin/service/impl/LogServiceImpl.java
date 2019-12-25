@@ -1,10 +1,12 @@
-package com.my.blog.website.service.impl;
+package com.my.blog.website.module.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.module.admin.entity.Log;
 import com.my.blog.website.module.admin.mapper.LogMapper;
-import com.my.blog.website.service.ILogService;
+import com.my.blog.website.module.admin.service.ILogService;
 import com.my.blog.website.utils.DateKit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,8 +51,8 @@ public class LogServiceImpl implements ILogService {
         }
         QueryWrapper<Log> logQueryWrapper = new QueryWrapper<>();
         logQueryWrapper.orderByDesc("id");
-        List<Log> logVos = logMapper.selectList(logQueryWrapper);
+        IPage<Log> logVos = logMapper.selectPage(new Page<>(page, limit), logQueryWrapper);
         log.debug("Exit getLogs method");
-        return logVos;
+        return logVos.getRecords();
     }
 }

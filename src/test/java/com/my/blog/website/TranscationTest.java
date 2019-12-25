@@ -2,8 +2,8 @@ package com.my.blog.website;
 
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.module.admin.entity.User;
-import com.my.blog.website.service.IOptionService;
-import com.my.blog.website.service.IUserService;
+import com.my.blog.website.module.admin.service.IOptionService;
+import com.my.blog.website.module.admin.service.IUserService;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.mybatis.spring.annotation.MapperScan;

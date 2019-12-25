@@ -11,10 +11,10 @@ import com.my.blog.website.module.admin.entity.Comment;
 import com.my.blog.website.module.admin.entity.Content;
 import com.my.blog.website.module.admin.entity.Log;
 import com.my.blog.website.module.admin.entity.User;
+import com.my.blog.website.module.admin.service.ILogService;
+import com.my.blog.website.module.admin.service.ISiteService;
+import com.my.blog.website.module.admin.service.IUserService;
 import com.my.blog.website.module.blog.controller.BaseController;
-import com.my.blog.website.service.ILogService;
-import com.my.blog.website.service.ISiteService;
-import com.my.blog.website.service.IUserService;
 import com.my.blog.website.utils.TaleUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -57,7 +57,7 @@ public class IndexController extends BaseController {
         List<Content> contents = siteService.recentContents(5);
         StatisticsBo statistics = siteService.getStatistics();
         // 取最新的20条日志
-        List<Log> logs = logService.getLogs(1, 5);
+        List<Log> logs = logService.getLogs(1, 10);
 
         request.setAttribute("comments", comments);
         request.setAttribute("articles", contents);

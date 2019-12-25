@@ -1,4 +1,4 @@
-package com.my.blog.website.service;
+package com.my.blog.website.module.admin.service;
 
 import com.my.blog.website.module.admin.entity.Option;
 

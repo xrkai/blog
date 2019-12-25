@@ -1,10 +1,10 @@
-package com.my.blog.website.service.impl;
+package com.my.blog.website.module.admin.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.my.blog.website.module.admin.entity.Relationship;
 import com.my.blog.website.module.admin.mapper.RelationshipMapper;
-import com.my.blog.website.service.IRelationshipService;
+import com.my.blog.website.module.admin.service.IRelationshipService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

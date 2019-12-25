@@ -1,4 +1,4 @@
-package com.my.blog.website.service;
+package com.my.blog.website.module.admin.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

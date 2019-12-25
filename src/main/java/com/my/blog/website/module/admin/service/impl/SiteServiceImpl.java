@@ -1,7 +1,9 @@
-package com.my.blog.website.service.impl;
+package com.my.blog.website.module.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.dto.MetaDto;
 import com.my.blog.website.dto.Types;
@@ -17,7 +19,7 @@ import com.my.blog.website.module.admin.mapper.AttachMapper;
 import com.my.blog.website.module.admin.mapper.CommentMapper;
 import com.my.blog.website.module.admin.mapper.ContentMapper;
 import com.my.blog.website.module.admin.mapper.MetaMapper;
-import com.my.blog.website.service.ISiteService;
+import com.my.blog.website.module.admin.service.ISiteService;
 import com.my.blog.website.utils.DateKit;
 import com.my.blog.website.utils.TaleUtils;
 import com.my.blog.website.utils.ZipUtils;
@@ -60,6 +62,7 @@ public class SiteServiceImpl implements ISiteService {
         QueryWrapper<Comment> commentQueryWrapper = new QueryWrapper<>();
         commentQueryWrapper.orderByDesc("created");
         log.debug("Exit recentComments method");
+        IPage<Comment> list = commentMapper.selectPage(new Page<>(1, limit), commentQueryWrapper);
         return commentMapper.selectList(commentQueryWrapper);
     }
 
@@ -71,9 +74,9 @@ public class SiteServiceImpl implements ISiteService {
         }
         QueryWrapper<Content> contentQueryWrapper = new QueryWrapper<>();
         contentQueryWrapper.orderByDesc("created");
-        List<Content> list = contentMapper.selectList(contentQueryWrapper);
+        IPage<Content> list = contentMapper.selectPage(new Page<>(1, limit), contentQueryWrapper);
         log.debug("Exit recentContents method");
-        return list;
+        return list.getRecords();
     }
 
     @Override

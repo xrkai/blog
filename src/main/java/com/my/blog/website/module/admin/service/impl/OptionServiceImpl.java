@@ -1,8 +1,8 @@
-package com.my.blog.website.service.impl;
+package com.my.blog.website.module.admin.service.impl;
 
 import com.my.blog.website.module.admin.entity.Option;
 import com.my.blog.website.module.admin.mapper.OptionMapper;
-import com.my.blog.website.service.IOptionService;
+import com.my.blog.website.module.admin.service.IOptionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

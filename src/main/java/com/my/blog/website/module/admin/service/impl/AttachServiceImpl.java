@@ -1,11 +1,11 @@
-package com.my.blog.website.service.impl;
+package com.my.blog.website.module.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.my.blog.website.module.admin.entity.Attach;
 import com.my.blog.website.module.admin.mapper.AttachMapper;
-import com.my.blog.website.service.IAttachService;
+import com.my.blog.website.module.admin.service.IAttachService;
 import com.my.blog.website.utils.DateKit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

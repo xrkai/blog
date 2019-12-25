@@ -1,11 +1,11 @@
-package com.my.blog.website.service.impl;
+package com.my.blog.website.module.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.my.blog.website.exception.TipException;
 import com.my.blog.website.module.admin.entity.User;
 import com.my.blog.website.module.admin.mapper.UserMapper;
-import com.my.blog.website.service.IUserService;
+import com.my.blog.website.module.admin.service.IUserService;
 import com.my.blog.website.utils.TaleUtils;
 import org.springframework.stereotype.Service;
 

@@ -4,7 +4,7 @@ import com.my.blog.website.common.page.BasePageUtils;
 import com.my.blog.website.constant.WebConst;
 import com.my.blog.website.dto.Types;
 import com.my.blog.website.module.admin.entity.User;
-import com.my.blog.website.service.IUserService;
+import com.my.blog.website.module.admin.service.IUserService;
 import com.my.blog.website.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

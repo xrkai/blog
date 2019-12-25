@@ -8,7 +8,7 @@ import com.my.blog.website.dto.MetaDto;
 import com.my.blog.website.dto.Types;
 import com.my.blog.website.module.admin.entity.Comment;
 import com.my.blog.website.module.admin.entity.Content;
-import com.my.blog.website.service.ISiteService;
+import com.my.blog.website.module.admin.service.ISiteService;
 import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Component;
 

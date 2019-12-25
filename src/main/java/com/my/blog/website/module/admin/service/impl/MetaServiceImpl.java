@@ -1,4 +1,4 @@
-package com.my.blog.website.service.impl;
+package com.my.blog.website.module.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -10,9 +10,9 @@ import com.my.blog.website.module.admin.entity.Content;
 import com.my.blog.website.module.admin.entity.Meta;
 import com.my.blog.website.module.admin.entity.Relationship;
 import com.my.blog.website.module.admin.mapper.MetaMapper;
-import com.my.blog.website.service.IContentService;
-import com.my.blog.website.service.IMetaService;
-import com.my.blog.website.service.IRelationshipService;
+import com.my.blog.website.module.admin.service.IContentService;
+import com.my.blog.website.module.admin.service.IMetaService;
+import com.my.blog.website.module.admin.service.IRelationshipService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

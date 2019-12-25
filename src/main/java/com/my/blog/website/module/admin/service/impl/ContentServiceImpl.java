@@ -1,4 +1,4 @@
-package com.my.blog.website.service.impl;
+package com.my.blog.website.module.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -10,12 +10,11 @@ import com.my.blog.website.exception.TipException;
 import com.my.blog.website.module.admin.entity.Content;
 import com.my.blog.website.module.admin.mapper.ContentMapper;
 import com.my.blog.website.module.admin.mapper.MetaMapper;
-import com.my.blog.website.service.IContentService;
-import com.my.blog.website.service.IMetaService;
-import com.my.blog.website.service.IRelationshipService;
+import com.my.blog.website.module.admin.service.IContentService;
+import com.my.blog.website.module.admin.service.IMetaService;
+import com.my.blog.website.module.admin.service.IRelationshipService;
 import com.my.blog.website.utils.DateKit;
 import com.my.blog.website.utils.TaleUtils;
-import com.my.blog.website.utils.Tools;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -110,25 +109,15 @@ public class ContentServiceImpl implements IContentService {
 
     @Override
     public Content getContents(String id) {
-        if (StringUtils.isNotEmpty(id)) {
-            if (Tools.isNumber(id)) {
-                Content content = contentMapper.selectById(Integer.valueOf(id));
-                if (content != null) {
-                    content.setHits(content.getHits() + 1);
-                    contentMapper.updateById(content);
-                }
-                return content;
-            } else {
-                QueryWrapper<Content> contentQueryWrapper = new QueryWrapper<>();
-                contentQueryWrapper.lambda().eq(Content::getSlug, id);
-                List<Content> contents = contentMapper.selectList(contentQueryWrapper);
-                if (contents.size() != 1) {
-                    throw new TipException("query content by id and return is not one");
-                }
-                return contents.get(0);
-            }
+        if (StringUtils.isEmpty(id)) {
+            return null;
         }
-        return null;
+        Content content = contentMapper.selectById(id);
+        if (content != null) {
+            content.setHits(Integer.parseInt(content.getHits()) + 1 + "");
+            contentMapper.updateById(content);
+        }
+        return content;
     }
 
     @Override
