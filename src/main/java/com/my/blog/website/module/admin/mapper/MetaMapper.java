@@ -1,8 +1,8 @@
 package com.my.blog.website.module.admin.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.my.blog.website.dto.MetaDto;
 import com.my.blog.website.module.admin.entity.Meta;
+import com.my.blog.website.module.admin.entity.MetaDto;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 

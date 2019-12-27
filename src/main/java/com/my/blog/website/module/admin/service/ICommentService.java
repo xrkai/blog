@@ -2,8 +2,8 @@ package com.my.blog.website.module.admin.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.my.blog.website.modal.Bo.CommentBo;
 import com.my.blog.website.module.admin.entity.Comment;
+import com.my.blog.website.module.admin.vo.CommentVO;
 
 /**
  * Created by BlueT on 2017/3/16.
@@ -25,7 +25,7 @@ public interface ICommentService {
      * @param limit
      * @return CommentBo
      */
-    Page<CommentBo> getComments(String cid, int page, int limit);
+    Page<CommentVO> getComments(String cid, int page, int limit);
 
     /**
      * 获取文章下的评论

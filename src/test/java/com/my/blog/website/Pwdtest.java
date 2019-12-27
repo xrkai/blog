@@ -1,7 +1,7 @@
 package com.my.blog.website;
 
+import com.my.blog.website.common.utils.TaleUtils;
 import com.my.blog.website.module.admin.entity.User;
-import com.my.blog.website.utils.TaleUtils;
 
 /**
  * Created by shuaihan on 2017/4/2.

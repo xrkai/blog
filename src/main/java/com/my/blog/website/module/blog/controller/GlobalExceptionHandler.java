@@ -1,6 +1,6 @@
 package com.my.blog.website.module.blog.controller;
 
-import com.my.blog.website.exception.TipException;
+import com.my.blog.website.common.exception.TipException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

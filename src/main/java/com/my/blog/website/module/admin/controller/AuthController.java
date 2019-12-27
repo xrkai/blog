@@ -1,15 +1,15 @@
 package com.my.blog.website.module.admin.controller;
 
-import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.dto.LogActions;
-import com.my.blog.website.exception.TipException;
-import com.my.blog.website.modal.Bo.RestResponseBo;
+import com.my.blog.website.common.constant.LogActions;
+import com.my.blog.website.common.constant.WebConst;
+import com.my.blog.website.common.exception.TipException;
+import com.my.blog.website.common.result.RestResponse;
+import com.my.blog.website.common.utils.Commons;
+import com.my.blog.website.common.utils.TaleUtils;
 import com.my.blog.website.module.admin.entity.User;
 import com.my.blog.website.module.admin.service.ILogService;
 import com.my.blog.website.module.admin.service.IUserService;
 import com.my.blog.website.module.blog.controller.BaseController;
-import com.my.blog.website.utils.Commons;
-import com.my.blog.website.utils.TaleUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
@@ -56,11 +56,11 @@ public class AuthController extends BaseController {
      */
     @PostMapping(value = "login")
     @ResponseBody
-    public RestResponseBo doLogin(@RequestParam String username,
-                                  @RequestParam String password,
-                                  @RequestParam(required = false) String remeber_me,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response) {
+    public RestResponse doLogin(@RequestParam String username,
+                                @RequestParam String password,
+                                @RequestParam(required = false) String remeber_me,
+                                HttpServletRequest request,
+                                HttpServletResponse response) {
 
         Integer error_count = cache.get("login_error_count");
         try {
@@ -73,7 +73,7 @@ public class AuthController extends BaseController {
         } catch (Exception e) {
             error_count = null == error_count ? 1 : error_count + 1;
             if (error_count > 3) {
-                return RestResponseBo.fail("您输入密码已经错误超过3次，请10分钟后尝试");
+                return RestResponse.fail("您输入密码已经错误超过3次，请10分钟后尝试");
             }
             cache.set("login_error_count", error_count, 10 * 60);
             String msg = "登录失败";
@@ -82,9 +82,9 @@ public class AuthController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
-        return RestResponseBo.ok();
+        return RestResponse.ok();
     }
 
     /**

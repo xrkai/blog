@@ -1,11 +1,11 @@
 package com.my.blog.website.module.admin.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.dto.LogActions;
-import com.my.blog.website.dto.Types;
-import com.my.blog.website.exception.TipException;
-import com.my.blog.website.modal.Bo.RestResponseBo;
+import com.my.blog.website.common.constant.LogActions;
+import com.my.blog.website.common.constant.Types;
+import com.my.blog.website.common.constant.WebConst;
+import com.my.blog.website.common.exception.TipException;
+import com.my.blog.website.common.result.RestResponse;
 import com.my.blog.website.module.admin.entity.Content;
 import com.my.blog.website.module.admin.entity.User;
 import com.my.blog.website.module.admin.service.IContentService;
@@ -56,9 +56,9 @@ public class PageController extends BaseController {
     @PostMapping(value = "publish")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo publishPage(@RequestParam String title, @RequestParam String content,
-                                      @RequestParam String status, @RequestParam String slug,
-                                      @RequestParam(required = false) Integer allowComment, @RequestParam(required = false) Integer allowPing, HttpServletRequest request) {
+    public RestResponse publishPage(@RequestParam String title, @RequestParam String content,
+                                    @RequestParam String status, @RequestParam String slug,
+                                    @RequestParam(required = false) Integer allowComment, @RequestParam(required = false) Integer allowPing, HttpServletRequest request) {
 
         User users = this.user(request);
         Content contents = new Content();
@@ -84,18 +84,18 @@ public class PageController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
-        return RestResponseBo.ok();
+        return RestResponse.ok();
     }
 
     @PostMapping(value = "modify")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo modifyArticle(@RequestParam String cid, @RequestParam String title,
-                                        @RequestParam String content,
-                                        @RequestParam String status, @RequestParam String slug,
-                                        @RequestParam(required = false) Integer allowComment, @RequestParam(required = false) Integer allowPing, HttpServletRequest request) {
+    public RestResponse modifyArticle(@RequestParam String cid, @RequestParam String title,
+                                      @RequestParam String content,
+                                      @RequestParam String status, @RequestParam String slug,
+                                      @RequestParam(required = false) Integer allowComment, @RequestParam(required = false) Integer allowPing, HttpServletRequest request) {
 
         User users = this.user(request);
         Content contents = new Content();
@@ -121,15 +121,15 @@ public class PageController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
-        return RestResponseBo.ok();
+        return RestResponse.ok();
     }
 
     @RequestMapping(value = "delete")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo delete(@RequestParam String cid, HttpServletRequest request) {
+    public RestResponse delete(@RequestParam String cid, HttpServletRequest request) {
         try {
             contentsService.deleteByCid(cid);
             logService.insertLog(LogActions.DEL_PAGE.getAction(), cid + "", request.getRemoteAddr(), this.getUid(request));
@@ -140,8 +140,8 @@ public class PageController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
-        return RestResponseBo.ok();
+        return RestResponse.ok();
     }
 }

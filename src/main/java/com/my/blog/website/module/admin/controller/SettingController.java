@@ -2,11 +2,11 @@ package com.my.blog.website.module.admin.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.dto.LogActions;
-import com.my.blog.website.exception.TipException;
-import com.my.blog.website.modal.Bo.BackResponseBo;
-import com.my.blog.website.modal.Bo.RestResponseBo;
+import com.my.blog.website.common.constant.LogActions;
+import com.my.blog.website.common.constant.WebConst;
+import com.my.blog.website.common.exception.TipException;
+import com.my.blog.website.common.result.BackResponse;
+import com.my.blog.website.common.result.RestResponse;
 import com.my.blog.website.module.admin.entity.Option;
 import com.my.blog.website.module.admin.service.ILogService;
 import com.my.blog.website.module.admin.service.IOptionService;
@@ -60,7 +60,7 @@ public class SettingController extends BaseController {
     @PostMapping(value = "")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo saveSetting(@RequestParam(required = false) String site_theme, HttpServletRequest request) {
+    public RestResponse saveSetting(@RequestParam(required = false) String site_theme, HttpServletRequest request) {
         try {
             Map<String, String[]> parameterMap = request.getParameterMap();
             Map<String, String> querys = new HashMap<>();
@@ -76,7 +76,7 @@ public class SettingController extends BaseController {
                 BaseController.THEME = "themes/" + site_theme;
             }
             logService.insertLog(LogActions.SYS_SETTING.getAction(), JSONObject.toJSONString(querys), request.getRemoteAddr(), this.getUid(request));
-            return RestResponseBo.ok();
+            return RestResponse.ok();
         } catch (Exception e) {
             String msg = "保存设置失败";
             if (e instanceof TipException) {
@@ -84,7 +84,7 @@ public class SettingController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
     }
 
@@ -97,15 +97,15 @@ public class SettingController extends BaseController {
     @PostMapping(value = "backup")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo backup(@RequestParam String bk_type, @RequestParam String bk_path,
-                                 HttpServletRequest request) {
+    public RestResponse backup(@RequestParam String bk_type, @RequestParam String bk_path,
+                               HttpServletRequest request) {
         if (StringUtils.isEmpty(bk_type)) {
-            return RestResponseBo.fail("请确认信息输入完整");
+            return RestResponse.fail("请确认信息输入完整");
         }
         try {
-            BackResponseBo backResponse = siteService.backup(bk_type, bk_path, "yyyyMMddHHmm");
+            BackResponse backResponse = siteService.backup(bk_type, bk_path, "yyyyMMddHHmm");
             logService.insertLog(LogActions.SYS_BACKUP.getAction(), null, request.getRemoteAddr(), this.getUid(request));
-            return RestResponseBo.ok(backResponse);
+            return RestResponse.ok(backResponse);
         } catch (Exception e) {
             String msg = "备份失败";
             if (e instanceof TipException) {
@@ -113,7 +113,7 @@ public class SettingController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
     }
 

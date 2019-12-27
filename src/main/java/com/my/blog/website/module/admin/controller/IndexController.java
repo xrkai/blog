@@ -2,11 +2,11 @@ package com.my.blog.website.module.admin.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.dto.LogActions;
-import com.my.blog.website.exception.TipException;
-import com.my.blog.website.modal.Bo.RestResponseBo;
-import com.my.blog.website.modal.Bo.StatisticsBo;
+import com.my.blog.website.common.constant.LogActions;
+import com.my.blog.website.common.constant.WebConst;
+import com.my.blog.website.common.exception.TipException;
+import com.my.blog.website.common.result.RestResponse;
+import com.my.blog.website.common.utils.TaleUtils;
 import com.my.blog.website.module.admin.entity.Comment;
 import com.my.blog.website.module.admin.entity.Content;
 import com.my.blog.website.module.admin.entity.Log;
@@ -14,8 +14,8 @@ import com.my.blog.website.module.admin.entity.User;
 import com.my.blog.website.module.admin.service.ILogService;
 import com.my.blog.website.module.admin.service.ISiteService;
 import com.my.blog.website.module.admin.service.IUserService;
+import com.my.blog.website.module.admin.vo.StatisticsVO;
 import com.my.blog.website.module.blog.controller.BaseController;
-import com.my.blog.website.utils.TaleUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +55,7 @@ public class IndexController extends BaseController {
         log.info("Enter admin index method");
         List<Comment> comments = siteService.recentComments(5);
         List<Content> contents = siteService.recentContents(5);
-        StatisticsBo statistics = siteService.getStatistics();
+        StatisticsVO statistics = siteService.getStatistics();
         // 取最新的20条日志
         List<Log> logs = logService.getLogs(1, 10);
 
@@ -93,7 +93,7 @@ public class IndexController extends BaseController {
     @PostMapping(value = "/profile")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo saveProfile(@RequestParam String screenName, @RequestParam String email, HttpServletRequest request, HttpSession session) {
+    public RestResponse saveProfile(@RequestParam String screenName, @RequestParam String email, HttpServletRequest request, HttpSession session) {
 
         User users = this.user(request);
         if (StringUtils.isNotEmpty(screenName) && StringUtils.isNotEmpty(email)) {
@@ -110,7 +110,7 @@ public class IndexController extends BaseController {
             original.setEmail(email);
             session.setAttribute(WebConst.LOGIN_SESSION_KEY, original);
         }
-        return RestResponseBo.ok();
+        return RestResponse.ok();
     }
 
     /**
@@ -119,17 +119,17 @@ public class IndexController extends BaseController {
     @PostMapping(value = "/password")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo upPwd(@RequestParam String oldPassword, @RequestParam String password, HttpServletRequest request, HttpSession session) {
+    public RestResponse upPwd(@RequestParam String oldPassword, @RequestParam String password, HttpServletRequest request, HttpSession session) {
         User users = this.user(request);
         if (StringUtils.isEmpty(oldPassword) || StringUtils.isEmpty(password)) {
-            return RestResponseBo.fail("请确认信息输入完整");
+            return RestResponse.fail("请确认信息输入完整");
         }
 
         if (!users.getPassword().equals(TaleUtils.MD5encode(users.getUsername() + oldPassword))) {
-            return RestResponseBo.fail("旧密码错误");
+            return RestResponse.fail("旧密码错误");
         }
         if (password.length() < 6 || password.length() > 14) {
-            return RestResponseBo.fail("请输入6-14位密码");
+            return RestResponse.fail("请输入6-14位密码");
         }
 
         try {
@@ -144,7 +144,7 @@ public class IndexController extends BaseController {
             User original = (User) session.getAttribute(WebConst.LOGIN_SESSION_KEY);
             original.setPassword(pwd);
             session.setAttribute(WebConst.LOGIN_SESSION_KEY, original);
-            return RestResponseBo.ok();
+            return RestResponse.ok();
         } catch (Exception e) {
             String msg = "密码修改失败";
             if (e instanceof TipException) {
@@ -152,7 +152,7 @@ public class IndexController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
     }
 }

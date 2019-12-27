@@ -3,24 +3,24 @@ package com.my.blog.website.module.blog.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.dto.ErrorCode;
-import com.my.blog.website.dto.MetaDto;
-import com.my.blog.website.dto.Types;
-import com.my.blog.website.exception.TipException;
-import com.my.blog.website.modal.Bo.ArchiveBo;
-import com.my.blog.website.modal.Bo.CommentBo;
-import com.my.blog.website.modal.Bo.RestResponseBo;
+import com.my.blog.website.common.constant.ErrorCode;
+import com.my.blog.website.common.constant.Types;
+import com.my.blog.website.common.constant.WebConst;
+import com.my.blog.website.common.exception.TipException;
+import com.my.blog.website.common.result.RestResponse;
+import com.my.blog.website.common.utils.IPKit;
+import com.my.blog.website.common.utils.PatternKit;
+import com.my.blog.website.common.utils.TaleUtils;
 import com.my.blog.website.module.admin.entity.Comment;
 import com.my.blog.website.module.admin.entity.Content;
 import com.my.blog.website.module.admin.entity.Meta;
+import com.my.blog.website.module.admin.entity.MetaDto;
 import com.my.blog.website.module.admin.service.ICommentService;
 import com.my.blog.website.module.admin.service.IContentService;
 import com.my.blog.website.module.admin.service.IMetaService;
 import com.my.blog.website.module.admin.service.ISiteService;
-import com.my.blog.website.utils.IPKit;
-import com.my.blog.website.utils.PatternKit;
-import com.my.blog.website.utils.TaleUtils;
+import com.my.blog.website.module.admin.vo.ArchiveVO;
+import com.my.blog.website.module.admin.vo.CommentVO;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -137,7 +137,7 @@ public class IndexController extends BaseController {
                 cp = "1";
             }
             request.setAttribute("cp", cp);
-            Page<CommentBo> commentsPaginator = commentService.getComments(contents.getCid(), Integer.parseInt(cp), 6);
+            Page<CommentVO> commentsPaginator = commentService.getComments(contents.getCid(), Integer.parseInt(cp), 6);
             request.setAttribute("comments", commentsPaginator);
         }
     }
@@ -159,45 +159,45 @@ public class IndexController extends BaseController {
     @PostMapping(value = "comment")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo comment(HttpServletRequest request, HttpServletResponse response,
-                                  @RequestParam String cid, @RequestParam String coid,
-                                  @RequestParam String author, @RequestParam String mail,
-                                  @RequestParam String url, @RequestParam String text, @RequestParam String _csrf_token) {
+    public RestResponse comment(HttpServletRequest request, HttpServletResponse response,
+                                @RequestParam String cid, @RequestParam String coid,
+                                @RequestParam String author, @RequestParam String mail,
+                                @RequestParam String url, @RequestParam String text, @RequestParam String _csrf_token) {
 
         String ref = request.getHeader("Referer");
         if (StringUtils.isEmpty(ref) || StringUtils.isEmpty(_csrf_token)) {
-            return RestResponseBo.fail(ErrorCode.BAD_REQUEST);
+            return RestResponse.fail(ErrorCode.BAD_REQUEST);
         }
 
         String token = cache.hget(Types.CSRF_TOKEN.getType(), _csrf_token);
         if (StringUtils.isEmpty(token)) {
-            return RestResponseBo.fail(ErrorCode.BAD_REQUEST);
+            return RestResponse.fail(ErrorCode.BAD_REQUEST);
         }
 
         if (null == cid || StringUtils.isEmpty(text)) {
-            return RestResponseBo.fail("请输入完整后评论");
+            return RestResponse.fail("请输入完整后评论");
         }
 
         if (StringUtils.isNotEmpty(author) && author.length() > 50) {
-            return RestResponseBo.fail("姓名过长");
+            return RestResponse.fail("姓名过长");
         }
 
         if (StringUtils.isNotEmpty(mail) && !TaleUtils.isEmail(mail)) {
-            return RestResponseBo.fail("请输入正确的邮箱格式");
+            return RestResponse.fail("请输入正确的邮箱格式");
         }
 
         if (StringUtils.isNotEmpty(url) && !PatternKit.isURL(url)) {
-            return RestResponseBo.fail("请输入正确的URL格式");
+            return RestResponse.fail("请输入正确的URL格式");
         }
 
         if (text.length() > 200) {
-            return RestResponseBo.fail("请输入200个字符以内的评论");
+            return RestResponse.fail("请输入200个字符以内的评论");
         }
 
         String val = IPKit.getIpAddrByRequest(request) + ":" + cid;
         Integer count = cache.hget(Types.COMMENTS_FREQUENCY.getType(), val);
         if (null != count && count > 0) {
-            return RestResponseBo.fail("您发表评论太快了，请过会再试");
+            return RestResponse.fail("您发表评论太快了，请过会再试");
         }
 
         author = TaleUtils.cleanXSS(author);
@@ -223,7 +223,7 @@ public class IndexController extends BaseController {
             }
             // 设置对每个文章1分钟可以评论一次
             cache.hset(Types.COMMENTS_FREQUENCY.getType(), val, 1, 60);
-            return RestResponseBo.ok();
+            return RestResponse.ok();
         } catch (Exception e) {
             String msg = "评论发布失败";
             if (e instanceof TipException) {
@@ -231,7 +231,7 @@ public class IndexController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
     }
 
@@ -273,7 +273,7 @@ public class IndexController extends BaseController {
      */
     @GetMapping(value = "archives")
     public String archives(HttpServletRequest request) {
-        List<ArchiveBo> archives = siteService.getArchives();
+        List<ArchiveVO> archives = siteService.getArchives();
         request.setAttribute("archives", archives);
         return this.render("archives");
     }
@@ -304,7 +304,7 @@ public class IndexController extends BaseController {
             if (StringUtils.isEmpty(cp)) {
                 cp = "1";
             }
-            Page<CommentBo> commentsPaginator = commentService.getComments(contents.getCid(), Integer.parseInt(cp), 6);
+            Page<CommentVO> commentsPaginator = commentService.getComments(contents.getCid(), Integer.parseInt(cp), 6);
             request.setAttribute("comments", commentsPaginator);
         }
         request.setAttribute("article", contents);

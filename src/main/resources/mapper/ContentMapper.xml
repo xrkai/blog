@@ -19,7 +19,7 @@
         <result column="allow_feed" jdbcType="BIT" property="allowFeed"/>
     </resultMap>
 
-    <resultMap id="archiveBoMap" type="com.my.blog.website.modal.Bo.ArchiveBo">
+    <resultMap id="archiveBoMap" type="com.my.blog.website.module.admin.vo.ArchiveVO">
         <id column="date" property="date"/>
         <result column="count" property="count"/>
     </resultMap>

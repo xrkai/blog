@@ -1,11 +1,11 @@
 package com.my.blog.website.module.admin.service;
 
-import com.my.blog.website.dto.MetaDto;
-import com.my.blog.website.modal.Bo.ArchiveBo;
-import com.my.blog.website.modal.Bo.BackResponseBo;
-import com.my.blog.website.modal.Bo.StatisticsBo;
+import com.my.blog.website.common.result.BackResponse;
 import com.my.blog.website.module.admin.entity.Comment;
 import com.my.blog.website.module.admin.entity.Content;
+import com.my.blog.website.module.admin.entity.MetaDto;
+import com.my.blog.website.module.admin.vo.ArchiveVO;
+import com.my.blog.website.module.admin.vo.StatisticsVO;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ public interface ISiteService {
      * @param fmt
      * @return
      */
-    BackResponseBo backup(String bk_type, String bk_path, String fmt) throws Exception;
+    BackResponse backup(String bk_type, String bk_path, String fmt) throws Exception;
 
 
     /**
@@ -57,14 +57,14 @@ public interface ISiteService {
      *
      * @return
      */
-    StatisticsBo getStatistics();
+    StatisticsVO getStatistics();
 
     /**
      * 查询文章归档
      *
      * @return
      */
-    List<ArchiveBo> getArchives();
+    List<ArchiveVO> getArchives();
 
     /**
      * 获取分类/标签列表

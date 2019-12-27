@@ -1,18 +1,18 @@
 package com.my.blog.website.module.admin.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.dto.LogActions;
-import com.my.blog.website.dto.Types;
-import com.my.blog.website.exception.TipException;
-import com.my.blog.website.modal.Bo.RestResponseBo;
+import com.my.blog.website.common.constant.LogActions;
+import com.my.blog.website.common.constant.Types;
+import com.my.blog.website.common.constant.WebConst;
+import com.my.blog.website.common.exception.TipException;
+import com.my.blog.website.common.result.RestResponse;
+import com.my.blog.website.common.utils.Commons;
+import com.my.blog.website.common.utils.TaleUtils;
 import com.my.blog.website.module.admin.entity.Attach;
 import com.my.blog.website.module.admin.entity.User;
 import com.my.blog.website.module.admin.service.IAttachService;
 import com.my.blog.website.module.admin.service.ILogService;
 import com.my.blog.website.module.blog.controller.BaseController;
-import com.my.blog.website.utils.Commons;
-import com.my.blog.website.utils.TaleUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,7 +72,7 @@ public class AttachController extends BaseController {
     @PostMapping(value = "upload")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo upload(HttpServletRequest request, @RequestParam("file") MultipartFile[] multipartFiles) throws IOException {
+    public RestResponse upload(HttpServletRequest request, @RequestParam("file") MultipartFile[] multipartFiles) throws IOException {
         User users = this.user(request);
         String uid = users.getUid();
         List<String> errorFiles = new ArrayList<>();
@@ -94,9 +94,9 @@ public class AttachController extends BaseController {
                 }
             }
         } catch (Exception e) {
-            return RestResponseBo.fail();
+            return RestResponse.fail();
         }
-        return RestResponseBo.ok(errorFiles);
+        return RestResponse.ok(errorFiles);
     }
 
     /**
@@ -109,11 +109,11 @@ public class AttachController extends BaseController {
     @RequestMapping(value = "delete")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo delete(@RequestParam Integer id, HttpServletRequest request) {
+    public RestResponse delete(@RequestParam Integer id, HttpServletRequest request) {
         try {
             Attach attach = attachService.selectById(id);
             if (null == attach) {
-                return RestResponseBo.fail("不存在该附件");
+                return RestResponse.fail("不存在该附件");
             }
             attachService.deleteById(id);
             new File(CLASSPATH + attach.getFkey()).delete();
@@ -125,9 +125,9 @@ public class AttachController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
-        return RestResponseBo.ok();
+        return RestResponse.ok();
     }
 
 }

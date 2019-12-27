@@ -1,6 +1,6 @@
 package com.my.blog.website;
 
-import com.my.blog.website.exception.TipException;
+import com.my.blog.website.common.exception.TipException;
 import com.my.blog.website.module.admin.entity.User;
 import com.my.blog.website.module.admin.service.IOptionService;
 import com.my.blog.website.module.admin.service.IUserService;

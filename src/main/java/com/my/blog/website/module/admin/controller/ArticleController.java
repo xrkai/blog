@@ -2,10 +2,10 @@ package com.my.blog.website.module.admin.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.my.blog.website.dto.LogActions;
-import com.my.blog.website.dto.Types;
-import com.my.blog.website.exception.TipException;
-import com.my.blog.website.modal.Bo.RestResponseBo;
+import com.my.blog.website.common.constant.LogActions;
+import com.my.blog.website.common.constant.Types;
+import com.my.blog.website.common.exception.TipException;
+import com.my.blog.website.common.result.RestResponse;
 import com.my.blog.website.module.admin.entity.Content;
 import com.my.blog.website.module.admin.entity.Meta;
 import com.my.blog.website.module.admin.entity.User;
@@ -96,7 +96,7 @@ public class ArticleController extends BaseController {
     @PostMapping(value = "/publish")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo publishArticle(Content contents, HttpServletRequest request) {
+    public RestResponse publishArticle(Content contents, HttpServletRequest request) {
         User users = this.user(request);
         contents.setAuthorId(users.getUid());
         contents.setType(Types.ARTICLE.getType());
@@ -112,9 +112,9 @@ public class ArticleController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
-        return RestResponseBo.ok();
+        return RestResponse.ok();
     }
 
     /**
@@ -127,7 +127,7 @@ public class ArticleController extends BaseController {
     @PostMapping(value = "/modify")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo modifyArticle(Content contents, HttpServletRequest request) {
+    public RestResponse modifyArticle(Content contents, HttpServletRequest request) {
         User users = this.user(request);
         contents.setAuthorId(users.getUid());
         contents.setType(Types.ARTICLE.getType());
@@ -140,9 +140,9 @@ public class ArticleController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
-        return RestResponseBo.ok();
+        return RestResponse.ok();
     }
 
     /**
@@ -155,7 +155,7 @@ public class ArticleController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo delete(@RequestParam String cid, HttpServletRequest request) {
+    public RestResponse delete(@RequestParam String cid, HttpServletRequest request) {
         try {
             contentsService.deleteByCid(cid);
             logService.insertLog(LogActions.DEL_ARTICLE.getAction(), cid + "", request.getRemoteAddr(), this.getUid(request));
@@ -166,8 +166,8 @@ public class ArticleController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
-        return RestResponseBo.ok();
+        return RestResponse.ok();
     }
 }

@@ -1,7 +1,7 @@
 package com.my.blog.website.module.admin.service;
 
-import com.my.blog.website.dto.MetaDto;
 import com.my.blog.website.module.admin.entity.Meta;
+import com.my.blog.website.module.admin.entity.MetaDto;
 
 import java.util.List;
 

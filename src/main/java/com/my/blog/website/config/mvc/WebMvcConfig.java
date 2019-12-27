@@ -1,8 +1,8 @@
 package com.my.blog.website.config.mvc;
 
 
-import com.my.blog.website.interceptor.BaseInterceptor;
-import com.my.blog.website.utils.TaleUtils;
+import com.my.blog.website.common.interceptor.BaseInterceptor;
+import com.my.blog.website.common.utils.TaleUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;

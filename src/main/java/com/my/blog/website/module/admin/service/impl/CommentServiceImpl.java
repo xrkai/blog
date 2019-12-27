@@ -4,15 +4,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.my.blog.website.exception.TipException;
-import com.my.blog.website.modal.Bo.CommentBo;
+import com.my.blog.website.common.exception.TipException;
+import com.my.blog.website.common.utils.DateKit;
+import com.my.blog.website.common.utils.TaleUtils;
 import com.my.blog.website.module.admin.entity.Comment;
 import com.my.blog.website.module.admin.entity.Content;
 import com.my.blog.website.module.admin.mapper.CommentMapper;
 import com.my.blog.website.module.admin.service.ICommentService;
 import com.my.blog.website.module.admin.service.IContentService;
-import com.my.blog.website.utils.DateKit;
-import com.my.blog.website.utils.TaleUtils;
+import com.my.blog.website.module.admin.vo.CommentVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +71,7 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public Page<CommentBo> getComments(String cid, int page, int limit) {
+    public Page<CommentVO> getComments(String cid, int page, int limit) {
         if (null != cid) {
             QueryWrapper<Comment> commentQueryWrapper = new QueryWrapper<>();
             commentQueryWrapper.lambda().eq(Comment::getCid, cid).eq(Comment::getParent, 0);
@@ -80,11 +80,11 @@ public class CommentServiceImpl implements ICommentService {
 
             Page<Comment> commentPaginator = new Page<>();
             commentPaginator.setRecords(parents);
-            Page<CommentBo> returnBo = copyPage(commentPaginator);
+            Page<CommentVO> returnBo = copyPage(commentPaginator);
             if (parents.size() != 0) {
-                List<CommentBo> comments = new ArrayList<>(parents.size());
+                List<CommentVO> comments = new ArrayList<>(parents.size());
                 parents.forEach(parent -> {
-                    CommentBo comment = new CommentBo(parent);
+                    CommentVO comment = new CommentVO(parent);
                     comments.add(comment);
                 });
                 returnBo.setRecords(comments);

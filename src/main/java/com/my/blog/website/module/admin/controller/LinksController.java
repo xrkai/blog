@@ -1,8 +1,8 @@
 package com.my.blog.website.module.admin.controller;
 
-import com.my.blog.website.dto.Types;
-import com.my.blog.website.exception.TipException;
-import com.my.blog.website.modal.Bo.RestResponseBo;
+import com.my.blog.website.common.constant.Types;
+import com.my.blog.website.common.exception.TipException;
+import com.my.blog.website.common.result.RestResponse;
 import com.my.blog.website.module.admin.entity.Meta;
 import com.my.blog.website.module.admin.service.IMetaService;
 import com.my.blog.website.module.blog.controller.BaseController;
@@ -42,9 +42,9 @@ public class LinksController extends BaseController {
     @PostMapping(value = "save")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo saveLink(@RequestParam String title, @RequestParam String url,
-                                   @RequestParam String logo, @RequestParam String mid,
-                                   @RequestParam(value = "sort", defaultValue = "0") int sort) {
+    public RestResponse saveLink(@RequestParam String title, @RequestParam String url,
+                                 @RequestParam String logo, @RequestParam String mid,
+                                 @RequestParam(value = "sort", defaultValue = "0") int sort) {
         try {
             Meta metas = new Meta();
             metas.setName(title);
@@ -65,15 +65,15 @@ public class LinksController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
-        return RestResponseBo.ok();
+        return RestResponse.ok();
     }
 
     @RequestMapping(value = "delete")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo delete(@RequestParam String mid) {
+    public RestResponse delete(@RequestParam String mid) {
         try {
             metasService.delete(mid);
         } catch (Exception e) {
@@ -83,9 +83,9 @@ public class LinksController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
-        return RestResponseBo.ok();
+        return RestResponse.ok();
     }
 
 }

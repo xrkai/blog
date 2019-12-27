@@ -1,13 +1,13 @@
 package com.my.blog.website.module.admin.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.my.blog.website.exception.TipException;
-import com.my.blog.website.modal.Bo.RestResponseBo;
+import com.my.blog.website.common.exception.TipException;
+import com.my.blog.website.common.result.RestResponse;
+import com.my.blog.website.common.utils.TaleUtils;
 import com.my.blog.website.module.admin.entity.Comment;
 import com.my.blog.website.module.admin.entity.User;
 import com.my.blog.website.module.admin.service.ICommentService;
 import com.my.blog.website.module.blog.controller.BaseController;
-import com.my.blog.website.utils.TaleUtils;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -56,11 +56,11 @@ public class CommentController extends BaseController {
     @PostMapping(value = "delete")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo delete(@RequestParam String coid) {
+    public RestResponse delete(@RequestParam String coid) {
         try {
             Comment comments = commentsService.getCommentById(coid);
             if (null == comments) {
-                return RestResponseBo.fail("不存在该评论");
+                return RestResponse.fail("不存在该评论");
             }
             commentsService.delete(coid, comments.getCid());
         } catch (Exception e) {
@@ -70,15 +70,15 @@ public class CommentController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
-        return RestResponseBo.ok();
+        return RestResponse.ok();
     }
 
     @PostMapping(value = "status")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo delete(@RequestParam String coid, @RequestParam String status) {
+    public RestResponse delete(@RequestParam String coid, @RequestParam String status) {
         try {
             Comment comments = new Comment();
             comments.setCoid(coid);
@@ -91,9 +91,9 @@ public class CommentController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
-        return RestResponseBo.ok();
+        return RestResponse.ok();
     }
 
     /**
@@ -107,17 +107,17 @@ public class CommentController extends BaseController {
     @PostMapping(value = "")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo reply(@RequestParam String coid, @RequestParam String content, HttpServletRequest request) {
+    public RestResponse reply(@RequestParam String coid, @RequestParam String content, HttpServletRequest request) {
         if (null == coid || StringUtils.isEmpty(content)) {
-            return RestResponseBo.fail("请输入完整后评论");
+            return RestResponse.fail("请输入完整后评论");
         }
 
         if (content.length() > 2000) {
-            return RestResponseBo.fail("请输入2000个字符以内的回复");
+            return RestResponse.fail("请输入2000个字符以内的回复");
         }
         Comment c = commentsService.getCommentById(coid);
         if (null == c) {
-            return RestResponseBo.fail("不存在该评论");
+            return RestResponse.fail("不存在该评论");
         }
         User users = this.user(request);
         content = TaleUtils.cleanXSS(content);
@@ -134,7 +134,7 @@ public class CommentController extends BaseController {
         comments.setParent(coid);
         try {
             commentsService.insertComment(comments);
-            return RestResponseBo.ok();
+            return RestResponse.ok();
         } catch (Exception e) {
             String msg = "回复失败";
             if (e instanceof TipException) {
@@ -142,7 +142,7 @@ public class CommentController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
     }
 

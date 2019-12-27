@@ -1,10 +1,10 @@
 package com.my.blog.website.module.admin.controller;
 
-import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.dto.MetaDto;
-import com.my.blog.website.dto.Types;
-import com.my.blog.website.exception.TipException;
-import com.my.blog.website.modal.Bo.RestResponseBo;
+import com.my.blog.website.common.constant.Types;
+import com.my.blog.website.common.constant.WebConst;
+import com.my.blog.website.common.exception.TipException;
+import com.my.blog.website.common.result.RestResponse;
+import com.my.blog.website.module.admin.entity.MetaDto;
 import com.my.blog.website.module.admin.service.IMetaService;
 import com.my.blog.website.module.blog.controller.BaseController;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +46,7 @@ public class CategoryController extends BaseController {
     @PostMapping(value = "save")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo saveCategory(@RequestParam String cname, @RequestParam String mid) {
+    public RestResponse saveCategory(@RequestParam String cname, @RequestParam String mid) {
         try {
             metasService.saveMeta(Types.CATEGORY.getType(), cname, mid);
         } catch (Exception e) {
@@ -56,9 +56,9 @@ public class CategoryController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
-        return RestResponseBo.ok();
+        return RestResponse.ok();
     }
 
     /**
@@ -70,7 +70,7 @@ public class CategoryController extends BaseController {
     @RequestMapping(value = "delete")
     @ResponseBody
     @Transactional(rollbackFor = TipException.class)
-    public RestResponseBo delete(@RequestParam String mid) {
+    public RestResponse delete(@RequestParam String mid) {
         try {
             metasService.delete(mid);
         } catch (Exception e) {
@@ -80,9 +80,9 @@ public class CategoryController extends BaseController {
             } else {
                 log.error(msg, e);
             }
-            return RestResponseBo.fail(msg);
+            return RestResponse.fail(msg);
         }
-        return RestResponseBo.ok();
+        return RestResponse.ok();
     }
 
 }

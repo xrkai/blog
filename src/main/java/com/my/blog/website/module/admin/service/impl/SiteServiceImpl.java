@@ -4,26 +4,26 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.my.blog.website.constant.WebConst;
-import com.my.blog.website.dto.MetaDto;
-import com.my.blog.website.dto.Types;
-import com.my.blog.website.exception.TipException;
-import com.my.blog.website.modal.Bo.ArchiveBo;
-import com.my.blog.website.modal.Bo.BackResponseBo;
-import com.my.blog.website.modal.Bo.StatisticsBo;
+import com.my.blog.website.common.constant.Types;
+import com.my.blog.website.common.constant.WebConst;
+import com.my.blog.website.common.exception.TipException;
+import com.my.blog.website.common.result.BackResponse;
+import com.my.blog.website.common.utils.DateKit;
+import com.my.blog.website.common.utils.TaleUtils;
+import com.my.blog.website.common.utils.ZipUtils;
+import com.my.blog.website.common.utils.backup.Backup;
 import com.my.blog.website.module.admin.controller.AttachController;
 import com.my.blog.website.module.admin.entity.Comment;
 import com.my.blog.website.module.admin.entity.Content;
 import com.my.blog.website.module.admin.entity.Meta;
+import com.my.blog.website.module.admin.entity.MetaDto;
 import com.my.blog.website.module.admin.mapper.AttachMapper;
 import com.my.blog.website.module.admin.mapper.CommentMapper;
 import com.my.blog.website.module.admin.mapper.ContentMapper;
 import com.my.blog.website.module.admin.mapper.MetaMapper;
 import com.my.blog.website.module.admin.service.ISiteService;
-import com.my.blog.website.utils.DateKit;
-import com.my.blog.website.utils.TaleUtils;
-import com.my.blog.website.utils.ZipUtils;
-import com.my.blog.website.utils.backup.Backup;
+import com.my.blog.website.module.admin.vo.ArchiveVO;
+import com.my.blog.website.module.admin.vo.StatisticsVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -80,8 +80,8 @@ public class SiteServiceImpl implements ISiteService {
     }
 
     @Override
-    public BackResponseBo backup(String bk_type, String bk_path, String fmt) throws Exception {
-        BackResponseBo backResponse = new BackResponseBo();
+    public BackResponse backup(String bk_type, String bk_path, String fmt) throws Exception {
+        BackResponse backResponse = new BackResponse();
         if (bk_type.equals("attach")) {
             if (StringUtils.isEmpty(bk_path)) {
                 throw new TipException("请输入备份文件存储路径");
@@ -151,9 +151,9 @@ public class SiteServiceImpl implements ISiteService {
     }
 
     @Override
-    public StatisticsBo getStatistics() {
+    public StatisticsVO getStatistics() {
         log.debug("Enter getStatistics method");
-        StatisticsBo statistics = new StatisticsBo();
+        StatisticsVO statistics = new StatisticsVO();
         QueryWrapper<Content> contentQueryWrapper = new QueryWrapper<>();
         contentQueryWrapper.lambda()
                 .eq(Content::getType, Types.ARTICLE.getType())
@@ -178,9 +178,9 @@ public class SiteServiceImpl implements ISiteService {
     }
 
     @Override
-    public List<ArchiveBo> getArchives() {
+    public List<ArchiveVO> getArchives() {
         log.debug("Enter getArchives method");
-        List<ArchiveBo> archives = contentMapper.findReturnArchiveBo();
+        List<ArchiveVO> archives = contentMapper.findReturnArchiveBo();
         if (null != archives) {
             archives.forEach(archive -> {
                 String date = archive.getDate();
