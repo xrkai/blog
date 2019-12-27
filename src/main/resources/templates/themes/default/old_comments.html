@@ -8,8 +8,9 @@
         <form class="comment-form" id="comment-form" method="post" onsubmit="return comment_reply();" role="form">
             <input name="coid" type="hidden"/>
             <input name="cid" type="hidden" value="${article.cid}"/>
-            <input name="_csrf_token" type="hidden" value="">
-            <input class="form-control input-control clearfix" id="author" maxlength="12" name="author" placeholder="姓名 (*)"
+            <input name="csrfToken" type="hidden" value="">
+            <input class="form-control input-control clearfix" id="author" maxlength="12" name="author"
+                   placeholder="姓名 (*)"
                    required type="text" value="${login_user.username ?! ''}"/>
             <input class="form-control input-control clearfix" id="mail" name="mail" placeholder="邮箱 (*)" required
                    type="email" value="${login_user.email ?! ''}"/>
@@ -58,7 +59,8 @@
                                 <div class="comment-view">
                                     <div class="comment-header">
                                         <img class="avatar" height="80"
-                                             src="${gravatar(child.mail)}?s=80&r=G&d=" title="${child.author}" width="80">
+                                             src="${gravatar(child.mail)}?s=80&r=G&d=" title="${child.author}"
+                                             width="80">
                                         <span class="comment-author comment-by-author">
                                             <a href="${child.url}" rel="external nofollow" target="_blank">${child.author}</a>
                                         </span>

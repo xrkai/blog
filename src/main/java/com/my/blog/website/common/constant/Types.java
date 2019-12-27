@@ -1,6 +1,9 @@
 package com.my.blog.website.common.constant;
 
 public enum Types {
+    /**
+     * 相关的基础文件枚举
+     */
     TAG("tag"),
     CATEGORY("category"),
     ARTICLE("post"),
@@ -10,7 +13,7 @@ public enum Types {
     LINK("link"),
     IMAGE("image"),
     FILE("file"),
-    CSRF_TOKEN("csrf_token"),
+    CSRF_TOKEN("csrfToken"),
     COMMENTS_FREQUENCY("comments:frequency"),
 
     /**

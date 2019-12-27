@@ -96,9 +96,9 @@ public class Backup {
                 sbuf.append(str);
                 for (int k = 0; k < dataTable.size(); k++) {
                     Row row = dataTable.get(k);
-                    str = "(" + getSQLValue(table, row, 0);
+                    str = "(" + getSqlValue(table, row, 0);
                     for (int i = 1; i < dataTable.getColumns().size(); i++) {
-                        str += ", " + getSQLValue(table, row, i);
+                        str += ", " + getSqlValue(table, row, i);
                     }
                     str += ")";
                     if (k < dataTable.size() - 1) {
@@ -120,7 +120,7 @@ public class Backup {
         sbuf.append("# ------------------------------------------------------------\r\n");
     }
 
-    public String getSQLValue(Table table, Row row, int index) {
+    public String getSqlValue(Table table, Row row, int index) {
         Column column = table.getColumns().get(index);
         int type = column.getDataType();
         if (row.get(index) == null) {

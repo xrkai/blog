@@ -34,6 +34,8 @@ public final class Commons {
     public static String THEME = "themes/default";
     private static ISiteService siteService;
 
+    private static Pattern m = Pattern.compile("src\\s*=\\s*\'?\"?(.*?)(\'|\"|>|\\s+)");
+
     public static void setSiteService(ISiteService ss) {
         siteService = ss;
     }
@@ -184,7 +186,7 @@ public final class Commons {
      * @return
      */
     public static String random(int max, String str) {
-        return UUID.random(1, max) + str;
+        return AbstractUUID.random(1, max) + str;
     }
 
     /**
@@ -406,10 +408,10 @@ public final class Commons {
             Matcher m_image = p_image.matcher(content);
             if (m_image.find()) {
                 img = img + "," + m_image.group();
+                Matcher matcher = m.matcher(img);
                 // //匹配src
-                Matcher m = Pattern.compile("src\\s*=\\s*\'?\"?(.*?)(\'|\"|>|\\s+)").matcher(img);
-                if (m.find()) {
-                    return m.group(1);
+                if (matcher.find()) {
+                    return matcher.group(1);
                 }
             }
         }

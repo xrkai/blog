@@ -82,7 +82,7 @@ public class SiteServiceImpl implements ISiteService {
     @Override
     public BackResponse backup(String bk_type, String bk_path, String fmt) throws Exception {
         BackResponse backResponse = new BackResponse();
-        if (bk_type.equals("attach")) {
+        if ("attach".equals(bk_type)) {
             if (StringUtils.isEmpty(bk_path)) {
                 throw new TipException("请输入备份文件存储路径");
             }
@@ -103,7 +103,7 @@ public class SiteServiceImpl implements ISiteService {
             backResponse.setAttachPath(attachPath);
             backResponse.setThemePath(themesPath);
         }
-        if (bk_type.equals("db")) {
+        if ("db".equals(bk_type)) {
 
             String bkAttachDir = AttachController.CLASSPATH + "upload/";
             if (!(new File(bkAttachDir)).isDirectory()) {

@@ -95,7 +95,7 @@ public class IndexController extends BaseController {
     public String getArticle(HttpServletRequest request, @PathVariable String cid) {
         Content contents = contentService.getContents(cid);
         if (null == contents || "draft".equals(contents.getStatus())) {
-            return this.render_404();
+            return this.render404();
         }
         request.setAttribute("article", contents);
         request.setAttribute("is_post", true);
@@ -115,7 +115,7 @@ public class IndexController extends BaseController {
     public String articlePreview(HttpServletRequest request, @PathVariable String cid) {
         Content contents = contentService.getContents(cid);
         if (null == contents) {
-            return this.render_404();
+            return this.render404();
         }
         request.setAttribute("article", contents);
         request.setAttribute("is_post", true);
@@ -162,14 +162,14 @@ public class IndexController extends BaseController {
     public RestResponse comment(HttpServletRequest request, HttpServletResponse response,
                                 @RequestParam String cid, @RequestParam String coid,
                                 @RequestParam String author, @RequestParam String mail,
-                                @RequestParam String url, @RequestParam String text, @RequestParam String _csrf_token) {
+                                @RequestParam String url, @RequestParam String text, @RequestParam String csrfToken) {
 
         String ref = request.getHeader("Referer");
-        if (StringUtils.isEmpty(ref) || StringUtils.isEmpty(_csrf_token)) {
+        if (StringUtils.isEmpty(ref) || StringUtils.isEmpty(csrfToken)) {
             return RestResponse.fail(ErrorCode.BAD_REQUEST);
         }
 
-        String token = cache.hget(Types.CSRF_TOKEN.getType(), _csrf_token);
+        String token = cache.hget(Types.CSRF_TOKEN.getType(), csrfToken);
         if (StringUtils.isEmpty(token)) {
             return RestResponse.fail(ErrorCode.BAD_REQUEST);
         }
@@ -252,7 +252,7 @@ public class IndexController extends BaseController {
         page = page < 0 || page > WebConst.MAX_PAGE ? 1 : page;
         MetaDto metaDto = metaService.getMeta(Types.CATEGORY.getType(), keyword);
         if (null == metaDto) {
-            return this.render_404();
+            return this.render404();
         }
 
         IPage<Content> contentsPaginator = contentService.getArticles(metaDto.getMid(), page, limit);
@@ -297,7 +297,7 @@ public class IndexController extends BaseController {
     public String page(@PathVariable String pagename, HttpServletRequest request) {
         Content contents = contentService.getContents(pagename);
         if (null == contents) {
-            return this.render_404();
+            return this.render404();
         }
         if (contents.getAllowComment()) {
             String cp = request.getParameter("cp");
@@ -377,11 +377,11 @@ public class IndexController extends BaseController {
     public String tags(HttpServletRequest request, @PathVariable String name, @PathVariable int page, @RequestParam(value = "limit", defaultValue = "12") int limit) {
 
         page = page < 0 || page > WebConst.MAX_PAGE ? 1 : page;
-//        对于空格的特殊处理
+        // 对于空格的特殊处理
         name = name.replaceAll("\\+", " ");
         MetaDto metaDto = metaService.getMeta(Types.TAG.getType(), name);
         if (null == metaDto) {
-            return this.render_404();
+            return this.render404();
         }
 
         IPage<Content> contentsPaginator = contentService.getArticles(metaDto.getMid(), page, limit);

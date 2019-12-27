@@ -16,7 +16,7 @@
                       role="form">
                     <input id="coid" name="coid" type="hidden"/>
                     <input id="cid" name="cid" th:value="${article.cid}" type="hidden"/>
-                    <input name="_csrf_token" th:value="${_csrf_token}" type="hidden"/>
+                    <input name="csrfToken" th:value="${csrfToken}" type="hidden"/>
                     <input class="form-control input-control clearfix" id="author" maxlength="12" name="author"
                            placeholder="姓名 (*)"
                            type="text"

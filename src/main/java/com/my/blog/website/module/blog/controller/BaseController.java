@@ -49,7 +49,7 @@ public abstract class BaseController {
         return this.user(request).getUid();
     }
 
-    public String render_404() {
+    public String render404() {
         return "comm/error_404";
     }
 

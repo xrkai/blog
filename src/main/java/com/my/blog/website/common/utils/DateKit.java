@@ -17,7 +17,7 @@ public class DateKit {
     public static final int INTERVAL_HOUR = 5;
     public static final int INTERVAL_MINUTE = 6;
     public static final int INTERVAL_SECOND = 7;
-    public static final Date tempDate = new Date((new Long("-2177481952000")).longValue());
+    public static final Date TEMPDATE = new Date((new Long("-2177481952000")).longValue());
     private static List<SimpleDateFormat> dateFormats = new ArrayList(12) {
         private static final long serialVersionUID = 2249396579858199535L;
 
@@ -103,7 +103,7 @@ public class DateKit {
     public static String birthdayFormat(Date date) {
         if (date != null) {
             SimpleDateFormat format = null;
-            if (date.before(tempDate)) {
+            if (date.before(TEMPDATE)) {
                 format = new SimpleDateFormat("MM-dd");
             } else {
                 format = new SimpleDateFormat("yyyy-MM-dd");
@@ -267,6 +267,9 @@ public class DateKit {
                 break;
             case 7:
                 time += (long) n;
+                break;
+            default:
+                break;
         }
 
         Date result = new Date();
@@ -310,6 +313,9 @@ public class DateKit {
                     break;
                 case 7:
                     result = intervalTime / 1L;
+                    break;
+                default:
+                    break;
             }
 
             if (tmp > 0L) {

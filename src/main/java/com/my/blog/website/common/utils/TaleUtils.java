@@ -37,7 +37,7 @@ public class TaleUtils {
     /**
      * 一个月
      */
-    private static final int one_month = 30 * 24 * 60 * 60;
+    private static final int ONE_MONTH = 30 * 24 * 60 * 60;
     /**
      * 匹配邮箱正则
      */
@@ -53,6 +53,8 @@ public class TaleUtils {
      * 获取文件所在目录
      */
     private static String location = TaleUtils.class.getClassLoader().getResource("").getPath();
+
+    private static Pattern scriptPattern = Pattern.compile("<script>(.*?)</script>", Pattern.CASE_INSENSITIVE);
 
     /**
      * 判断是否是邮箱
@@ -71,7 +73,7 @@ public class TaleUtils {
      * @return
      */
     public static int getCurrentTime() {
-        return (int) (new Date().getTime() / 1000);
+        return (int) (System.currentTimeMillis() / 1000);
     }
 
     /**
@@ -361,38 +363,28 @@ public class TaleUtils {
             cleanValue = Normalizer.normalize(value, Normalizer.Form.NFD);
             // Avoid null characters
             cleanValue = cleanValue.replaceAll("\0", "");
-
             // Avoid anything between script tags
-            Pattern scriptPattern = Pattern.compile("<script>(.*?)</script>", Pattern.CASE_INSENSITIVE);
             cleanValue = scriptPattern.matcher(cleanValue).replaceAll("");
-
             // Avoid anything in a src='...' type of expression
             scriptPattern = Pattern.compile("src[\r\n]*=[\r\n]*\\\'(.*?)\\\'", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
             cleanValue = scriptPattern.matcher(cleanValue).replaceAll("");
-
             scriptPattern = Pattern.compile("src[\r\n]*=[\r\n]*\\\"(.*?)\\\"", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
             cleanValue = scriptPattern.matcher(cleanValue).replaceAll("");
-
             // Remove any lonesome </script> tag
             scriptPattern = Pattern.compile("</script>", Pattern.CASE_INSENSITIVE);
             cleanValue = scriptPattern.matcher(cleanValue).replaceAll("");
-
             // Remove any lonesome <script ...> tag
             scriptPattern = Pattern.compile("<script(.*?)>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
             cleanValue = scriptPattern.matcher(cleanValue).replaceAll("");
-
             // Avoid eval(...) expressions
             scriptPattern = Pattern.compile("eval\\((.*?)\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
             cleanValue = scriptPattern.matcher(cleanValue).replaceAll("");
-
             // Avoid expression(...) expressions
             scriptPattern = Pattern.compile("expression\\((.*?)\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
             cleanValue = scriptPattern.matcher(cleanValue).replaceAll("");
-
             // Avoid javascript:... expressions
             scriptPattern = Pattern.compile("javascript:", Pattern.CASE_INSENSITIVE);
             cleanValue = scriptPattern.matcher(cleanValue).replaceAll("");
-
             // Avoid vbscript:... expressions
             scriptPattern = Pattern.compile("vbscript:", Pattern.CASE_INSENSITIVE);
             cleanValue = scriptPattern.matcher(cleanValue).replaceAll("");
@@ -427,7 +419,7 @@ public class TaleUtils {
             new File(AttachController.CLASSPATH + prefix).mkdirs();
         }
         if (name == null) {
-            return prefix + "/" + UUID.UU32() + "." + null;
+            return prefix + "/" + AbstractUUID.UU32() + "." + null;
         } else {
             name = name.replace('\\', '/');
             name = name.substring(name.lastIndexOf("/") + 1);
@@ -436,7 +428,7 @@ public class TaleUtils {
             if (index >= 0) {
                 ext = name.substring(index + 1);
             }
-            return prefix + "/" + UUID.UU32() + "." + (ext == null ? null : (ext));
+            return prefix + "/" + AbstractUUID.UU32() + "." + (ext == null ? null : (ext));
         }
     }
 
