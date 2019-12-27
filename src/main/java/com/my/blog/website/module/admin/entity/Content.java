@@ -72,7 +72,7 @@ public class Content {
      * 点击次数
      */
     @TableField("hits")
-    private String hits;
+    private Integer hits;
     /**
      * 内容所属评论数
      */

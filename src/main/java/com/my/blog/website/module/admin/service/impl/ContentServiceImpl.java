@@ -85,7 +85,7 @@ public class ContentServiceImpl implements IContentService {
         int time = DateKit.getCurrentUnixTime();
         contents.setCreated(time);
         contents.setModified(time);
-        contents.setHits("0");
+        contents.setHits(0);
         contents.setCommentsNum(0);
         String tags = contents.getTags();
         String categories = contents.getCategories();
@@ -114,7 +114,8 @@ public class ContentServiceImpl implements IContentService {
         }
         Content content = contentMapper.selectById(id);
         if (content != null) {
-            content.setHits(Integer.parseInt(content.getHits()) + 1 + "");
+            log.info("浏览次数: {}", content.getHits());
+            content.setHits(content.getHits() + 1);
             contentMapper.updateById(content);
         }
         return content;

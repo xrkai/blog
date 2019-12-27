@@ -183,7 +183,7 @@ public class TaleUtils {
         if (newDataSource == null) {
             synchronized (TaleUtils.class) {
                 if (newDataSource == null) {
-                    Properties properties = TaleUtils.getPropFromFile("application-jdbc.properties");
+                    Properties properties = TaleUtils.getPropFromFile("application.yml");
                     if (properties.size() == 0) {
                         return newDataSource;
                     }

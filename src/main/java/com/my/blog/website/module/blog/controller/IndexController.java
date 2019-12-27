@@ -341,20 +341,15 @@ public class IndexController extends BaseController {
      * @param chits
      */
     @Transactional(rollbackFor = TipException.class)
-    public void updateArticleHit(String cid, String chits) {
-        Integer hits = cache.hget("article", "hits");
-        if (StringUtils.isEmpty(chits)) {
-            chits = "0";
-        }
-        hits = null == hits ? 1 : hits + 1;
-        if (hits >= WebConst.HIT_EXCEED) {
+    public void updateArticleHit(String cid, Integer chits) {
+        if (chits >= WebConst.HIT_EXCEED) {
             Content temp = new Content();
             temp.setCid(cid);
-            temp.setHits(chits + hits);
+            temp.setHits(chits + 1);
             contentService.updateContentByCid(temp);
             cache.hset("article", "hits", 1);
         } else {
-            cache.hset("article", "hits", hits);
+            cache.hset("article", "hits", chits);
         }
     }
 
